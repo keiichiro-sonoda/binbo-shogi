@@ -1,0 +1,466 @@
+# 年表
+
+開発の作業記録 (2026-06-20〜) を日付順に並べたもの。各行は作業の区切りごとの見出しで, 細部は `reports/` と `STATUS.md` にある。
+
+
+## 2026-06
+
+- 2026-06-20 Initial yasai perft benchmark harness
+- 2026-06-20 Add random-move USI engine
+- 2026-06-20 Add project source-of-truth docs
+- 2026-06-20 Record core engine design decisions
+- 2026-06-20 Clarify dfpn trait source
+- 2026-06-20 Introduce ThinkingEngine random adapter
+- 2026-06-20 Record Gikou as teacher engine
+- 2026-06-20 Design Gikou distillation dataset plan
+- 2026-06-20 Record hcpe dataset format decision
+- 2026-06-20 Implement custom hcpe writer
+- 2026-06-20 Add KP feature conversion pipeline
+- 2026-06-21 Verify KP reversibility on 507k diverse positions
+- 2026-06-21 Add minimal NNUE training smoke
+- 2026-06-21 Add Gikou teacher data smoke pipeline
+- 2026-06-21 Add sharded teacher-data generation pipeline; generate 1M positions
+- 2026-06-21 Train NNUE on 1M positions; validation loss drops (generalizes)
+- 2026-06-21 Implement KP conversion in Rust, matching Python numbering exactly
+- 2026-06-21 Document the KP feature spec as the canonical source
+- 2026-06-21 Run trained NNUE forward pass in Rust, matching Python logits
+- 2026-06-21 Wire the trained NNUE into a playing engine (1-ply search)
+- 2026-06-21 Add fixed-depth alpha-beta search; depth-3 beats depth-1
+- 2026-06-21 Add transposition table to alpha-beta search (~33% faster at depth 5)
+- 2026-06-21 Add iterative deepening (TT carried across depths)
+- 2026-06-21 Add hash-move ordering; ~11x faster at midgame depth 5 (cumulative)
+- 2026-06-21 Centralize optimization/future-work backlog into docs/BACKLOG.md
+- 2026-06-21 Add time management and per-iteration info output
+- 2026-06-22 Establish persistent data storage policy; move weights/teacher data off /tmp
+- 2026-06-22 Add MVV-LVA move ordering and a thinking-log option
+- 2026-06-23 Measure NNUE strength against Gikou
+- 2026-06-23 Diagnose NNUE weakness against Gikou
+- 2026-06-23 Task 031: pv 出力 + 評価の質を診断(符号は正しいが度合いが0付近に圧縮)
+- 2026-06-23 Task 032: 既存 model_wd1e-4 を nnue-diag で診断(度合い圧縮は解けず=②の根拠)
+- 2026-06-23 Task 033: 評価関数を cp 直接回帰で再学習し度合いの圧縮を緩和
+- 2026-06-23 Task 034: NNUE 構造拡大の切り分け — 容量では度合いは伸びない(=データが主因)
+- 2026-06-23 Task 035: 教師データ cp 分布を調査 — decisive は豊富、真因は汎化(過学習)
+- 2026-06-23 Task 036: 左右対称データ拡張で汎化ギャップを縮める(val 度合い +11%, gap -32%)
+- 2026-06-23 Task 037: 埋め込み次元↓は汎化に効かない(確定)+ fd8 を効率採用
+- 2026-06-23 Task 038: dropout は過学習を減らすが度合いを圧縮する(採用せず)
+- 2026-06-23 Task 039: 教師データ倍増(生100万→200万)で汎化が伸びた + GPU 学習整備
+- 2026-06-23 Task 040: 教師データ 生400万(計800万 with mirror)— 伸び継続・棋力が動いた
+- 2026-06-23 Task 041: 教師データ 生800万(計1600万 with mirror)— 逓減明確化 + 初勝利 + 過学習ほぼ消滅
+- 2026-06-24 Task 042: Revisit NNUE capacity on 8M data
+- 2026-06-24 Task 044: 環境復旧(技巧2・venv)+ 永続/一時の分類確立
+- 2026-06-24 Task 045: 教師 depth10 実測・生成・対照学習 → depth↑の質の軸を不採用
+- 2026-06-24 Task 046: 正準 HalfKP を切替式で実装 → 入力表現の正準化を不採用
+- 2026-06-24 Task 047: 本物の正準 HalfKP(W₁共有・単一帯)を実装 — Task 046 は偽だった
+- 2026-06-24 Task 048: 学習哲学のドキュメント化 + 採用切替 + KPP 規模・コスト調査
+- 2026-06-25 Task 049: 探索バンドル(静止探索+killer+history+王手延長+PVS)で技巧2 Lv1 に 47%
+- 2026-06-25 Task 050: LMR(Late Move Reduction)追加 — 技巧2 Lv2 14.6%→41.7%
+- 2026-06-25 Task 050: Lv2 に勝ち越し(58%)+ WDL 教師/学習を実装(Lv3/Lv4 用)
+- 2026-06-25 Task 050: 積極 LMR(深い reduction)— Lv3 を 16.7%→25% に上積み
+- 2026-06-25 Task 050: STATUS 更新 — Lv2 達成/積極LMR採用/WDL打ち止め/Lv3+評価天井
+- 2026-06-25 task051: 学習目標の決着 — 標準WDL objective を実装し棋力で cp と比較→cp 維持
+- 2026-06-25 task052: HalfKA(玉を駒特徴に含める)実装 — 表現で初めて棋力が動く(Lv3 +18pp)も plain は不採用
+- 2026-06-25 task053 Part1: HalfKAv2(自玉-as-piece 冗長除去)— 微妙(悪化)で不採用、KPP へ
+- 2026-06-25 task053 Part2 (WIP): king-zone KPP 特徴層+モデル+キャッシュ — 数値一致検証済み
+- 2026-06-25 task053 Part2: KPP 学習・Rust推論パイプライン完成 — forward 数値一致 2.5e-06
+- 2026-06-25 task053: KPP 8M キャッシュの OOM 修正(flat 蓄積を array.array に)
+- 2026-06-25 task053 決着: king-zone KPP は val を上げるが棋力を動かさず不採用、表現路線は打ち止め
+- 2026-06-25 task054: DL系教師(dlshogi)第一歩 — 4060 Ti で動作・re-score・コスト確認
+- 2026-06-25 task055: 教師を dlshogi に差し替え再蒸留 → 全レベルで悪化、不採用(重要な負の結果)
+- 2026-06-26 task056: 方向転換(自前探索→やねうら王土台、自作NNUE評価で勝負)の地固め
+- 2026-06-26 task057: forward parity 検証 — 付番ズレを潰し手順確立(標準256, GREEN)
+- 2026-06-26 qat058: binbo量子化対応(QAT)— 536cp→量子化誤差、Rust Mode::Quant + BNNQ
+- 2026-06-26 writer059: binbo QAT eval → nn.bin writer(逆経路)— 自前 eval が実エンジンに bit-exact で乗る
+- 2026-06-26 searchmatch060: 同一eval × 自前探索 vs YaneuraOu探索 — bridge本走、SPRT 0-19-0(探索器に≥50elo差)
+- 2026-06-27 evaltune061: 技巧2蒸留 eval 強化 — 学習 lr の修正だけで本命256が +約190〜240 elo
+- 2026-06-28 data16m062: 技巧2蒸留 教師データ 8M→16M — champion に +125 elo、頭打ちでない
+- 2026-06-28 safelaunch063: 長時間ジョブの安全起動 — setsid 汎用ラッパー detached.sh + 運用ノート
+- 2026-06-29 data32m064: 技巧2蒸留 教師データ 16M→32M — 16M champion に +141 elo、val は逓減・棋力は維持
+- 2026-06-29 labelcost065: 自己強化ループのラベル生成コスト計測 — champion@YaneuraOu 固定深さ time/cp
+- 2026-06-29 loop066: 自己強化ループ設計確定 + 1サイクル・リハーサル — 機構GREEN, 当該configは後退(gen1棄却)
+- 2026-06-29 replay067: replay 比率の探索 — 066 後退の主因=replay 不足と確定、15.6% で champion とパリティ(超えず)
+- 2026-06-29 newdata068: 新規自己対局量 10万→100万 — 仮説と逆に弱化、ボトルネックは量でなく質と判明
+- 2026-06-29 policy069: 自己対局に温度サンプリング — これも悪化、再サンプリング系では champion を超えられないと確定
+- 2026-06-30 depth070: ラベル深さ d12→d14 + gold診断 — 質は上がるが loop は悪化、真の律速は新ラベル↔d8 replay 不一致
+- 2026-06-30 selfanchor071: 技巧2@d8 replay 全除去→champion 自己ラベル100% — 3世代で最悪化、d8 アンカーは load-bearing と確定(自己対局ラベルでは超えられない)
+
+## 2026-07
+
+- 2026-07-01 anchor072: より強い教師アンカー(技巧2@d12)検証→行き止まり、技巧2@d8 を本アーキの天井と受容(自己強化アーク 066-072 の結論)
+- 2026-07-01 survey073: (c) AlphaZero/MCTS 転換の徹底調査(実装なし)— 単機での self-play RL 可行性を一次情報で洗い出し
+- 2026-07-01 framework074: (c) AlphaZero フレームワーク選定 — Pgx/MiniZero/kZero 実測比較、Pgx(+mctx)推奨
+- 2026-07-01 m0-075: (c) M0 PASS — Pgx でどうぶつ将棋 AlphaZero ループが単機で回り学習済 baseline を越えた
+- 2026-07-02 m1-076: (c) M1 PASS — フル将棋 self-play の単機動作点を実測特定、warm-start 推奨=b(champion 蒸留)
+- 2026-07-02 m2-077: (c) M2 PASS — 価値のみ蒸留 warm-start を USI 化し champion との立ち位置を測定成立
+- 2026-07-03 m3-078: (c) M3 FAIL(本予算)— AZ 自己対局ループ 150 iter は warm-start を超えず(−110 elo)、ただしループは学習=設定問題と切り分け
+- 2026-07-04 m3x-079: (c) M3延長 — 通算300 iter で warm-start と互角まで回復(−11 elo)、有意超えは未達=「時間か吸引点か」が次の分岐
+- 2026-07-04 m3x-079 追記: gen400 判別 — パリティ=吸引点が確定(gen400 −15 elo = gen300 と同一、追加一晩で伸びゼロ)→ 080 は案1 方策 warm-start を推奨
+- 2026-07-05 m4-080: (c) M4 PASS — 方策 warm-start + 自己対局ループで初期化点を有意に超えた(+133 elo, SPRT accept_h1)= (c) 目標達成
+- 2026-07-08 m5-081: (c) M5 延長ラン gen150→gen200 = 頭打ち確定(gen200 vs WS2 +109 ≈ gen150 +133、統計的に同一)
+- 2026-07-09 m6-082: (c) M6 ネット容量 64ch→128ch = 部分 PASS(容量は warm-start の律速だが loop・αβ壁の律速でない)
+- 2026-07-10 m7a-083: (c) M7-a sims 床テスト = (b)net 品質の床(探索予算でない)。探索は内部を増幅するが外部に非転写
+- 2026-07-10 az-teacher-084: AZ value 教師上書き = 決定的 PASS。WS2-128 value は技巧2@d8 探索cp より +237 elo 良い NNUE 教師
+- 2026-07-11 az-32m-085: 32M 平滑化教師 vs champion = RED(−36 elo)。2M +237 はスケールで反転=平滑化は小データ正則化、天井堅持
+- 2026-07-12 map-086: 057-085 全体地図 docs/PROJECT_MAP_057-085.md(何を試し・何が閉じ・何が開いているか)
+- 2026-07-12 t1-087: Transformer warm-start 検証 = GO(第2章を Transformer で続行)
+- 2026-07-12 az-src: (c) AlphaZero アークの実験ソースをバージョン管理下へ(073-087)
+- 2026-07-12 ssot-088: (c) 実験コードを symlink SSOT 化 + detached.sh に実行版トレーサビリティ
+- 2026-07-12 t2scale-089 code: train-subset eval(gap 診断)+ スケール点ランチャ(7.6M/14.4M)
+- 2026-07-12 t2scale-089 code: t089_eval.sh(各スケール点の内部/champion/gikou/bench 評価ランチャ)
+- 2026-07-12 fix-089: train-subset eval の broadcast(obs は 2M memmap ゆえ subset 末尾で長さ不一致)を min-cap で修正
+- 2026-07-13 t2scale-089 code: t089_pipeline.sh(残り全工程を1本の逐次 detached ジョブ化)
+- 2026-07-13 t2scale-089: 規模スケーリング実測 = 規模は「同一 recipe/予算」では逆効果
+- 2026-07-13 t2recipe-090 code: 7.6M epoch-only 延長ランチャ + Phase1 パイプライン
+- 2026-07-13 t2recipe-090 code: Phase2 分岐ランチャ(7.6M @ lr3e-4 ep20)
+- 2026-07-13 t2recipe-090: 089 の留保を潰した = 内部の scale-hurt は undertraining、外部は非転写
+- 2026-07-14 t2loop-091 code: freeze value and gate teacher quality
+- 2026-07-15 t2loop-091: verify frozen value by parameter digest
+- 2026-07-15 t2loop-091: record frozen-loop teacher verdict
+- 2026-07-17 t2bridge-092: add NNUE bridge calibration
+- 2026-07-17 t2bridge-092: record bridge calibration verdict
+- 2026-07-18 t2loop-093: measure external checkpoint trend
+- 2026-07-24 t2loop-094: add policy anchor experiment
+- 2026-07-24 docs: record task094 active run
+- 2026-07-29 t2loop-094: record policy-anchor verdict (forgetting stopped, no positive transfer)
+- 2026-07-29 t2loop-095: add r=1.0 supervised-only control (pre-registered)
+- 2026-07-29 docs: record task095 active run
+- 2026-07-29 t2loop-095: make the regression gate robust to self-play nondeterminism
+- 2026-07-29 t2loop-095: record r=1.0 control verdict (supervised-dose explanation refuted)
+- 2026-07-30 t2loop-096: pre-register the decisive r=0.50 measurement + r=0.75 curve point
+- 2026-07-31 t2loop-096: record POSITIVE_TRANSFER_CONFIRMED (marginal) — first external transfer
+- 2026-07-31 t2loop-097: pre-register the seed-replication run (resolves 096's n=1 caveat)
+- 2026-07-31 t2loop-097: replace the anchor seed-change proxy with a deterministic stream check
+- 2026-07-31 t2loop-097: read the checkpoint seed out of process (torch venv lacks optax)
+
+## 2026-08
+
+- 2026-08-01 t2loop-097: record REPLICATED — the r=0.50 recipe's positive transfer reproduces
+- 2026-08-02 t2loop-098: pre-register the shared-trunk value-carriage screen
+- 2026-08-02 t2loop-098: parse t098-prefixed iteration lines (t095's parser hardcodes t094)
+- 2026-08-02 t2loop-098: record NULL_CARRIAGE_WALL — the value moved but does not carry
+- 2026-08-15 t2loop-099: pre-register the search-backed value-label screen
+- 2026-08-16 t2loop-099: record REGRESSION — the (a') search-backed value path is closed too
+
+## 2026-09
+
+- 2026-09-11 t2loop-100: pre-register the search-label mini student test (1M, both arms retrained)
+- 2026-09-11 docs: Web 調査メモ 2026-09-11(将棋・コンピュータ将棋の最新動向)
+- 2026-09-11 t2loop-100b: pre-register the 2M confirmation of the search-label student result
+- 2026-09-11 t2loop-100: record SEARCH_LABEL_TEACHES — the search-backed label teaches a better NNUE at 1M
+- 2026-09-11 fix-100b: analyse() referenced main's local limit_train (NameError after the match)
+- 2026-09-11 t2loop-100b: record SEARCH_LABEL_TEACHES at 2M — the search-label gain holds (+155 Elo)
+- 2026-09-11 docs-100b: 対局時刻の正確化(23:10→23:44)と BACKLOG ★(b) への 2M 結果の折り返し
+- 2026-09-12 t2loop-102: pre-register the 4M scale-curve point (102a) and the label-scale control (102b)
+- 2026-09-12 docs: record Task 102 active run (4M scale point + label-scale control, night of 9/12)
+- 2026-09-12 fix-102: make the 102b control scale-equivariant; derive the corpus string from the cache
+- 2026-09-12 docs: Task 102 relaunch (01:03) and the scale-equivariant control in STATUS
+- 2026-09-12 t2loop-102b: record SCALE_NOT_THE_MECHANISM — a 3.8% eval rescale is worth +8 [-15, +32] Elo
+- 2026-09-12 t2loop-102: record 4M SEARCH_LABEL_TEACHES (+124, shrinking -36/doubling) and the null scale control
+- 2026-09-12 t2loop-103: pre-register the 8M scale point, the S=8 ladder point, and the absolute frames
+- 2026-09-12 docs: record Task 103 active run and the completed +32M teacher generation (3200/3200)
+- 2026-09-12 t2loop-103c: record the absolute frames — the 4M search student is +88 (champion frame) / +42 (gikou@6 frame) over the raw student
+- 2026-09-12 t2loop-103a: record SEARCH_LABEL_TEACHES at 8M (+107 [83, 132]) — the decay is slowing
+- 2026-09-12 t2loop-103: record 8M +107 (decay slowing), S=8 +222 (sims-insensitive), and the absolute frames
+- 2026-09-12 t2loop-103d: pre-register the 8M students' gikou@6 frame (descriptive, 2 x 800 games)
+- 2026-09-12 t2loop-103d: record the 8M students' gikou@6 frame — search +74.5, raw -1.7, frame delta +76 [42, 111]
+- 2026-09-30 docs: append 9/30 web scan — search-label distillation vs industry practice (re-eval, qsearch_psv, ensembles)
+- 2026-09-30 monitor: CPU/GPU watcher with thermal guard and a progress page for detached jobs
+- 2026-09-30 monitor: overlay the selected job's run span and stage/epoch marks on the CPU/GPU charts
+- 2026-09-30 monitor: record the real Windows C: free space and the ext4.vhdx size
+- 2026-09-30 t2loop-104: pre-register the 32M decisive test — search-label student vs the champion
+- 2026-09-30 docs: record Task 104 active run (launched 9/30 09:47, rescore ~940/s)
+
+## 2026-10
+
+- 2026-10-03 docs: Task 104 stopped 9/30 14:06 by a Store WSL auto-update, resumed 10/3 00:56 from shard 726
+- 2026-10-03 monitor: measure rescore rate/ETA from the live segment, not the log's rows/elapsed
+- 2026-10-03 monitor: per-thread CPU load (real P/E cores via LHM) as a full/mid/idle stack and a heatmap
+- 2026-10-03 t2loop-104: SEARCH_BEATS_CHAMPION — 32M search-label student +134.2 [116.7, 152.4] vs champion
+- 2026-10-03 t2loop-104b: pre-register the gikou@6-frame confirmation — champion vs gikou@6 on S2's seeds
+- 2026-10-03 t2loop-104b: FRAME_CONFIRMS — search student beats the champion by +55.6 [10.6, 101.5] in the gikou@6 frame
+- 2026-10-04 adopt task104_student_search as the tournament eval (approved 10/4)
+- 2026-10-04 backlog: qsearch control — does tactical resolution alone give the search-label gain?
+- 2026-10-04 t2loop-105: pre-register the 1:1 averaged-label student and the gikou@7 yardstick
+- 2026-10-04 t2loop-105: preflight checks the _shared mirror perm that train_nnue actually reads
+- 2026-10-04 t2loop-105: PARITY — the 1:1 averaged label is -5.0 [-21.3, 11.3] vs the search label
+- 2026-10-04 backlog: qsearch control — split into label-only (b) and position-swap (a'); gikou@d8 labels are already searched
+- 2026-10-04 bench: qsearch barely moves labels (median 0cp, 54-68% positions untouched) while S=8 search moves 84% by >50cp
+- 2026-10-04 t2loop-106: pre-register the tactical-position filter; interruptible jobs (pause/resume)
+- 2026-10-04 train_nnue: load train_state on CPU (generator states must be CPU tensors on a CUDA run); job.sh: no SIGPIPE under pipefail
+- 2026-10-04 t2loop-106: FILTER_HELPS — skipping in-check / capture-best-move positions gives +20.2 [3.7, 36.8] direct, +48.4 [1.6, 95.8] on gikou@7
+- 2026-10-04 adopt task106_student_filter as the current best eval (approved 10/4)
+- 2026-10-04 t2loop-107: pre-register the 64M run — run32m_g appended, search labels on the new 32M, Task 106 mask (~40M rows)
+- 2026-10-05 t2loop-107: SCALE_HELPS — 64M (filtered ~40M rows) beats the adopted eval by +111.6 [93.9, 129.7], +98.4 [46.8, 152.3] on gikou@7
+- 2026-10-05 adopt task107_student_64m as the current best eval (approved 10/5)
+- 2026-10-05 docs: yardstick survey — gikou@8 crashes 9%, tanuki at equal time is -402; recommend node-limited multi-anchor gauntlet
+- 2026-10-05 docs: Suisho5 has no primary-source license statement; AobaNNUE is explicitly GPL-3.0
+- 2026-10-05 docs: choose tanuki- + AobaNNUE (node-limited) as the new anchors, with the selection rationale
+- 2026-10-05 harness: yane-vs-yane-ex — per-side binary, EvalDir, setoptions and go nodes/movetime
+- 2026-10-05 t108: anchor calibration procedure (node ladder -> pick ~0.65 -> confirm 400 games); AobaNNUE built from its GPL source
+- 2026-10-05 t108: 26 games per ladder worker (colour-swapped pairs need an even count)
+- 2026-10-05 monitor: show matches per series (same opponent and conditions), never summed across series
+- 2026-10-05 t108: anchors calibrated — tanuki- @10k nodes (adopted 71.9%, +163) and AobaNNUE @5k nodes (72.5%, +168), adopted eval at 100k nodes
+- 2026-10-05 t2loop-109: pre-register 24 epochs for the 64M student (resume from epoch 13 in a copy)
+- 2026-10-05 t2loop-109: EPOCHS_HELP — 24 epochs beat the adopted 12-epoch eval by +43.0 [25.9, 60.3], pooled anchors +46.7 [11.2, 82.5]
+- 2026-10-05 adopt task109_student_64m_e24 as the current best eval (approved 10/5)
+- 2026-10-05 t2loop-110: pre-register a cosine lr anneal (4 epochs) from the adopted eval
+- 2026-10-05 t2loop-110: ANNEAL_NEUTRAL — direct +37.3 [20.7, 54.1] vs the adopted eval, but pooled anchors +16.5 [-24.0, 57.1]
+- 2026-10-05 t2loop-111: pre-register game-result mixing (lambda 0.75 on known-result rows) vs the win-rate objective alone
+- 2026-10-06 t2loop-111: MIX_NEUTRAL — result mixing B vs A direct +16.5 [0.0, 33.3], pooled anchors +30.5 [-9.0, 70.6]; win-rate objective alone ~-23 vs cp
+- 2026-10-06 t2loop-112: pre-register result mixing kept in the cp objective (--cp-result-lambda 0.75) vs the Task 110 control
+- 2026-10-06 t2loop-112: CP_MIX_NEUTRAL — cp-space result mixing +37.9 [21.3, 54.7] direct vs the Task 110 control, pooled anchors +20.9 [-17.6, 60.1]
+- 2026-10-06 t2loop-113: pre-register more anchor games (new seeds only decide) and a direct C vs adopted match
+- 2026-10-06 t113: 4 chunks at a time (6 overheated, thermal guard stopped the run); node-fixed results unaffected
+- 2026-10-06 t2loop-113: C_NOT_CONFIRMED / MIX_UNRESOLVED — on new anchor games C-adopted +19.3 [-8.8, 47.6], C-control +1.0 [-28.0, 29.7]; direct +68 overstates parent-child gains
+- 2026-10-06 docs: correct Task 113 — direct/anchor gaps do not follow parent-child (109 is a child and agrees, 104 is not and disagrees)
+- 2026-10-06 docs: evaluation protocol — anchors decide (800+/anchor, paired, 100k nodes), direct matches are descriptive, confirm on fresh seeds before adoption
+- 2026-10-06 t2loop-114: pre-register the qsearch-widened tactical filter (skip gain >= 300 cp) at 32M; std_frame helper for reusable standard anchor games
+- 2026-10-06 t114: 8 mask processes (14 ran the CPU at 88°C)
+- 2026-10-06 t114: 4 mask processes (8 still tripped the thermal guard at 90°C)
+- 2026-10-06 t2loop-114: qsearch-widened tactical filter hurts (pooled anchors -30.5 [-54.8, -6.3] vs Task 106); not adopted
+- 2026-10-06 t2loop-115: pre-register the teacher-disagreement filter (skip |gikou - search| >= 600 cp on Task 106-kept rows) at 32M
+- 2026-10-07 t2loop-115: teacher-disagreement filter hurts (pooled anchors -35.3 [-59.2, -11.6] vs Task 106); not adopted
+- 2026-10-07 t2loop-116: pre-register the random-drop control (same 7.8% as Task 115, uniform) to separate volume from hard-position removal
+- 2026-10-07 t2loop-116: random drop is neutral (-11.1 [-35.0, +12.9]); teacher-gap drop is worse than random (-24.2 [-47.6, -0.7]) -> removing hard positions, not volume, cost Task 114/115
+- 2026-10-07 t2loop-117: train_nnue --row-weight (per-row cp loss weight, mean-1 over trained rows); pre-register teacher-gap weighting at 32M
+- 2026-10-07 t2loop-117: teacher-gap loss weighting is neutral (pooled anchors -16.2 [-40.9, +8.2]); best val loss but not stronger
+- 2026-10-07 docs: survey of next directions after position selection (FV_SCALE sweep, qsearch replacement, lr, factorizer; second teacher needs owner decision); correct the dlshogi +R51.2 attribution
+- 2026-10-07 t2loop-118: pre-register the FV_SCALE sweep of the adopted eval (12/20/24 vs 16, edge extension, fresh-seed confirmation); std_frame takes fv/seeds/prefix
+- 2026-10-07 t2loop-118: FV_SCALE sweep holds the default 16 (12 -52.5, 20 -27.8, 24 -11.9, 32 -22.0 pooled vs 16)
+- 2026-10-07 t2loop-119: pre-register qsearch replacement with inherited labels (YaneuraOu qsearch_psv) at 32M; arm A all rows, arm B with the Task 106 mask
+- 2026-10-08 t2loop-119: qsearch replacement with inherited labels is neutral (arm A -20.9 [-44.9, +3.0]); re-adding the Task 106-dropped rows hurts (A - B -26.4 [-50.3, -2.6])
+- 2026-10-08 t2loop-120: pre-register lr 3e-5 at 32M (Task 106 recipe otherwise)
+- 2026-10-08 t2loop-120: lr 3e-5 helps at 32M (pooled anchors +30.9 [+6.1, +55.8] vs Task 106); next 64M at 3e-5
+- 2026-10-08 t2loop-121: pre-register the 64M rebuild at lr 3e-5 (24 epochs, 12-epoch point kept, fresh-seed confirmation)
+- 2026-10-08 t2loop-121: 64M at lr 3e-5 (24 epochs) beats the adopted eval (+42.5 [+14.5, +70.7]; fresh seeds +70.1 [+41.7, +98.8]) -> adoption candidate
+- 2026-10-08 adopt task121_student_64m_lr3e5_e24 (lr 3e-5; approved 2026-10-08)
+- 2026-10-08 t2loop-122: pre-register lr 6e-5 / 1e-4 screening at 32M, then 64M at 12 epochs for the winner
+- 2026-10-09 t2loop-122: lr 6e-5 / 1e-4 beat 3e-5 at 32M (+46.3 / +36.8); 64M at 6e-5 for 12 epochs ties the adopted eval (-12.3 [-41.4, +16.5])
+- 2026-10-09 t2loop-123: pre-register resuming the 64M lr 6e-5 student to 24 epochs (fresh-seed confirmation on 20272301-08)
+- 2026-10-09 t2loop-123: 64M lr 6e-5 to 24 epochs never beat epoch 10's val loss; exported weights = Task 122 e12 -> neutral (-12.3)
+- 2026-10-09 t2loop-124: pre-register playing the last-epoch weights (6e-5 epoch 24 vs adopted; 3e-5 epoch 24 descriptive)
+- 2026-10-09 t2loop-124: last-epoch weights tie the adopted eval (6e-5 e24 -2.5, 3e-5 e24 -7.5); 64M is saturated on the training-recipe axis
+- 2026-10-09 t2loop-125: factorizer (king-independent P table folded at export; train_nnue --factorize) and its pre-registered 32M screen vs the lr 6e-5 student
+- 2026-10-09 t2loop-125: factorizer helps at 32M (+40.8 [+12.7, +69.3]; val loss -13%); next 64M
+- 2026-10-09 t2loop-126: pre-register the 64M factorizer student (lr 6e-5, 24 epochs, 12-epoch point kept, fresh-seed confirmation)
+- 2026-10-10 t2loop-126: 64M factorizer student beats the adopted eval (+35.0 [+4.3, +65.8]; fresh seeds +66.1 [+34.7, +98.4]) -> adoption candidate
+- 2026-10-10 adopt task126_student_64m_factor_e24 (factorizer, lr 6e-5; approved 2026-10-10)
+- 2026-10-10 t2loop-127: fix the anchor recalibration procedure (same engines, node ladder, target 0.65, new standard frame for the adopted eval)
+- 2026-10-10 t2loop-127: recalibrated yardstick = tanuki- @20,000 / AobaNNUE @10,000 nodes (adopted eval 0.599 / 0.585)
+- 2026-10-10 t2loop-128: pre-register qsearch replacement with relabelled leaves (32M, factorizer recipe, new yardstick)
+- 2026-10-11 t2loop-128: relabelled qsearch leaves help at 32M (+63.9 [+40.9, +86.8]; C - D +39.6) -> next 64M
+- 2026-10-11 t2loop-129: pre-register relabelled qsearch leaves at 64M vs the adopted eval (12 epochs, fresh-seed confirmation)
+- 2026-10-12 t2loop-129: 64M relabelled qsearch leaves beat the adopted eval (+27.0 [+2.5, +51.5]; fresh seeds +28.7 [+4.4, +53.1]) -> adoption candidate
+- 2026-10-12 adopt task129_student_64m_qsrel_e12 (relabelled qsearch leaves, no row mask, 12 epochs; approved 2026-10-12)
+- 2026-10-12 docs: research survey 2026-10-12 (next directions after relabelled qsearch leaves)
+- 2026-10-12 t2loop-130: pre-register teacher-score quantile calibration onto gikou@d8 (32M, vs Task 128 arm C)
+- 2026-10-13 t2loop-130: teacher-score calibration onto gikou@d8 is neutral, leaning worse (-21.2 [-44.7, +2.3])
+- 2026-10-13 t2loop-131: pre-register the win-rate power loss (|p - q|^2.5) at 32M vs Task 128 arm C
+- 2026-10-13 t2loop-131: win-rate power loss 2.5 is neutral, leaning worse (-20.3 [-43.7, +3.0]); loss/scale direction closed
+- 2026-10-13 t2loop-132: pre-register HalfKP_vm as weight tying (--vm) at 32M vs Task 128 arm C
+- 2026-10-13 t2loop-132: HalfKP_vm hurts (-33.7 [-56.4, -11.0]) despite a lower val loss; not adopted
+- 2026-10-13 電竜戦7 準備 段1・段2: ルール原文の確認と CSA クライアントの選定 (ShogiHome usi-csa-bridge を推奨)
+- 2026-10-14 電竜戦7 準備 段3: 通し試験の道具 (usi-csa-bridge 1.29.1 固定, 試験用 shogi-server とブイの時間の修正, 宣言の境目の検査, 遅延中継, 集計)
+- 2026-10-14 電竜戦7 準備 段3: 切断試験と時間切れの調査 (WSL の単調時計が 3.5% 遅いことを確認)
+- 2026-10-14 電竜戦7 準備 段3: 通し試験の結果 (宣言・512手・切断は合格、時間切れ 5/30 は WSL の単調時計が 3.5% 遅いため)
+- 2026-10-14 電竜戦7 準備: WSL の時計の追加調査 (ずれは起動ごとに変わり clocksource の切り替えでは直らない、Windows の時計は正しい)
+- 2026-10-14 電竜戦7 準備: 時計を NTP と比べる道具 clock_vs_ntp.py と, 同じ起動のままずれが消えた記録
+- 2026-10-14 電竜戦7 準備: Xeon の時計の測定 (単調時計/NTP の最大のずれ 0.04%, 壁時計の跳び 0 回 = 正確)
+- 2026-10-14 電竜戦7 準備: Xeon の時計の測定 (負荷あり 10 区間と 4 時間後の再測定も比 1.0000, 正確)
+- 2026-10-15 AGENTS.md: 共有すべき規約を追記 (セッションの URL・ID を書かない、参照できない別作業の名前を書かない、共通規約は AGENTS.md に置く)
+- 2026-10-15 電竜戦7 準備: Windows で直接動かす試験 (全部合格, 時間切れ 0/30, 遅れ最大 3ms) と Windows 用の道具
+- 2026-10-15 電竜戦7 準備: 文書のマシン名「母艦」を 14700KF に統一
+- 2026-10-15 電竜戦7 準備: Xubuntu で直接動かす試験 (全部合格, 時間切れ 0/30, 遅れ最大 10ms, 時計のずれ 0.02%)
+- 2026-10-16 電竜戦7 準備: 14700KF と Xeon の速さの比較 (全スレッドで 2,019 万 vs 1,865 万 nps, 1 スレッドで 2.3 倍)
+- 2026-10-16 電竜戦7 準備: 14700KF を全力で 1 時間回した熱の試験 (最大 87℃, 速度制限 0, 速さの低下なし) と温度の記録道具
+- 2026-10-16 電竜戦7 準備: 対局を見る閲覧ページ (bridge のログから盤面・残り時間・読み筋・評価値・CPU 温度)
+- 2026-10-16 電竜戦7 準備: 閲覧ページを木目の盤と駒の画像に (ShogiHome の画像, MIT, 版を固定して取得・git 非追跡)
+- 2026-10-16 電竜戦7 準備: サーバを Xeon に置き 14700KF (28 スレッド) から接続する試験 (4 局, 時間切れ 0, 遅れ最大 2ms)
+- 2026-10-16 電竜戦7 準備: summarize.py が bridge の棋譜も読めるように (加算を $TIME から, 本番のブイ 4 手を自動で見分ける, --buoys)
+- 2026-10-16 電竜戦7 準備: floodgate で 4 局 (2 勝 2 敗, 時間切れ 0, 通信の往復 最大 21ms)
+- 2026-10-16 電竜戦7 準備: bridge の CLI は x1 を使えないと判明 (本番は x1 のみ), floodgate で評価値が残らない原因, 4 局目の評価値の食い違い
+- 2026-10-16 電竜戦7 準備: ShogiHome が x1 を対局に使わない経緯 (管理者用に追加, 対局は CSA モード設計), 水匠が電竜戦で ShogiHome を使った記録
+- 2026-10-16 電竜戦7 準備: 運営の案内では CSA モードでも接続可能 (第7回ページのコメントアウトされた接続方法と第3回 TSEC のページ)
+- 2026-10-16 電竜戦7 準備: 接続方式の既定を v121_floodgate に (評価値・読み筋を中継に送る, ローカルで 154 手すべてに付くのを確認)
+- 2026-10-16 電竜戦7 準備: 評価値のコメントが付かない手の内訳 (ブイ 4 手と詰みの手順)
+- 2026-10-16 電竜戦7 準備: 当日の手順書と本番用の起動・様子見・停止の道具 (ローカルで手順どおりに試験済み)
+- 2026-10-16 電竜戦7 準備: Node 22 への更新は 10/15 21:02 (読み違いの訂正), 再起動待ちのカーネルと時計の測り直しを手順書に
+- 2026-10-16 電竜戦7 準備: 参加区分の説明と独創賞選考用文書の下書き
+- 2026-10-16 電竜戦7 準備: LLM・コーディングエージェントを使った将棋 AI 開発の状況 (文書の方針の参考)
+- 2026-10-16 電竜戦7 準備: 定跡の候補とライセンスの調査 (第一候補 = 新ペタショック定跡 233 万局面, MIT)
+- 2026-10-16 電竜戦7 準備: 定跡の段 1 (実戦の序盤 29 手を定跡がおさえる, 先手の序盤の 51 秒が浮く見込み, 抜けた局面の見方は binbo と一致)
+- 2026-10-16 電竜戦7 準備: 定跡あり対なしの連続対局 (book_match.sh, gen_config --book), 閲覧ページに勝敗, 見張りを素の Linux の温度センサーに対応
+- 2026-10-16 電竜戦7 準備: binbo は玉をあまり動かさない (棋譜で確認: 60 手目に 3 筋以上離れた玉 13% vs 強いソフト 43%)
+- 2026-10-16 電竜戦7 準備: 閲覧ページの改善 (最後の手の移動元・移動先を強調, 棋譜の一覧と巻き戻し, 読み筋と棋譜を日本語の表記に, 表示の幅を固定)
+- 2026-10-16 電竜戦7 準備: 閲覧ページの棋譜の欄を, 描き直しのたびに一番下へ戻さない (上を見ている間は位置を保つ)
+- 2026-10-17 電竜戦7 準備: 定跡の段 2 の偏り (エンジン 1 本だけのとき熱で速度が落ち, 定跡なしの側だけが序盤で不利)
+- 2026-10-17 電竜戦7 準備: 定跡の段 2 の結果 (40 局, 定跡あり +98 [-5, +222], 先手の序盤の消費 90 秒 → 12 秒, 熱の偏りあり)
+- 2026-10-17 電竜戦7 準備: 定跡はいったん見送り (作者決定), floodgate で試す方針
+- 2026-10-17 電竜戦7 準備: 一定時間後に形勢が大きく悪ければ投了を返す USI の中継 (floodgate の 30 分の枠を逃さないため)
+- 2026-10-17 電竜戦7 準備: floodgate で定跡ありを 5 局 (5 勝 0 敗, 評価値が公開棋譜に残る), 再起動後の時計も正確 (1.0000〜1.0001)
+- 2026-10-17 判定方法を Xubuntu に移し替え (物差しを取り直し sha256 一致, 採用 eval の標準 frame が Task 129 の記録と一致: 0.6525 / 0.605)
+- 2026-10-17 Task 133: 玉の危険の診断 (激しい局面ほど binbo は手番側を物差しより楽観: 自玉付近の敵 +20cp/枚, 相手玉付近の自駒 +27cp/枚)
+- 2026-10-17 Task 133 追加: 楽観は勝敗の情報ではない (-0.46 [-1.08,+0.13]); 攻めの楽観は教師由来 (S=8 +57, S=32 +31), 自玉の危険の軽視は学習の側 (教師 -56 に対し binbo +20)
+- 2026-10-17 Task 134 事前登録: 激しい局面 (どちらかの玉の 2 マス以内に敵 3 枚以上, 6,687,765 行) だけ WS-T S=32 で付け直して Task 129 と同じ学習, 標準の物差しで判定
+- 2026-10-18 Task 134 結果: 激しい局面だけ S=32 で付け直しても差なし (+12.2 [-12.7, +37.2], SHARP32_NEUTRAL), 採用は task129 のまま; 教師から生徒への橋渡しを BACKLOG へ
+- 2026-10-18 Task 134 追加: 生徒の楽観はラベルほど動かない (攻め +28 -> +20, 教師は +57 -> +31; 自玉の危険は教師 -57 に対し生徒 +16 のまま); t133 に --engines / --minus
+- 2026-10-18 Task 135 計測: 学習の 1 歩 (1024 局面) の内訳 = データの読み出し 26.9ms (ディスクの待ち) / 順伝播 14.5 / 逆伝播 11.3 / Adam 14.6, 同期なしで 45.8ms
+- 2026-10-18 Task 135: 学習器の速い経路 (--compact-cache / --sparse-ft / --fused-adam / --async-loss, まとめて --fast), 既定の経路は不変
+- 2026-10-18 Task 135 確認の事前登録 (速い経路で Task 129 を学習し直し, 標準の物差しで差がなければ乗り換え) と Task 136 の診断スクリプト (生徒は教師の玉の危険を学習データ上でも当てられないのか)
+- 2026-10-18 Task 135 結果: 学習 1 周 2454 -> 543 秒 (4.5 倍), 速い経路で学習し直すと +24.2 [+0.5, +48.2] (FAST_BETTER); Task 136: 生徒は学習データ上では玉の危険も教師どおり (表現の不足ではない), 学習していない val でだけ楽観
+- 2026-10-18 Task 136: 生徒は学習していない静止局面でも教師の玉の危険を再現 (残差 +2.7cp/枚); 楽観 (+33/枚) は取り合いの途中の局面でだけ = 橋渡しの問題はない
+- 2026-10-18 Task 135 新しい seed での確認の事前登録 (seeds 20273501-08, 下限 > 0 なら task135_student_fast を採用)
+- 2026-10-18 Task 135 レビュー対応: 元のキャッシュを同じ行数で作り直しても気づけるように (大きさ・更新時刻・先頭と末尾 64MiB のハッシュを照合), スクリプトとして直接起動しても --compact-cache が読み込めるように
+- 2026-10-18 Task 138 事前登録: 同じレシピを seed 2 つで学習し直して 1 回ごとのばらつきを測る, 9-12 周目の重みの平均 (SWA) も判定; 学習器に --save-epochs
+- 2026-10-18 Task 137 (Codex): 判定の対局を途中で止める逐次判定の案と過去の対局の再生; Task 135 の確認は NOT_CONFIRMED (-4.1 [-28.2, +20.1])
+- 2026-10-18 Task 139: Task 133 の実戦の局面を静止局面に置き換え, 同じ局面で教師 (WS-T S=8) と物差し・binbo を比べる準備
+- 2026-10-18 Task 139: 静止局面では binbo の玉の混み合いへの偏りは 0 と区別できない (+11/+7), 教師は偏る (+44/-42) が生徒には出ない; 教師と物差しの相関 0.47
+- 2026-10-18 Task 136 訂正: Codex の点検を受けて結論を狭める (±2000 で切った目標に対してだけ傾向が消える, 切らないと +178/枚; Task 133 の差 +77/枚 は同じ局面・同じ視点の有効な観測)
+- 2026-10-19 BACKLOG: 橋渡しの項目を Task 136 の訂正・Task 139 に合わせて書き直す
+- 2026-10-19 公開前の監査報告 (Codex, 報告のみ): 個人情報の場所, 試験用の認証の固定値, ライセンス本文がない, 新しい履歴での公開を推奨
+- 2026-10-19 Task 140 (Codex): 学習データを 128M に増やす計画と小規模の試験 (技巧2本体と Task 109 の eval が未移行, 128M は GPU に入らない)
+- 2026-10-19 Task 138b: 採用 eval の標準の物差しの成績がたまたま低いのかを見る対局 (3 つ目の seed の組, seed B の新しい seed)
+- 2026-10-19 Task 138c: 学習し直した B と C を 3 つ目の seed の組でも指す (採用 eval と 2,400 局ずつで比べるため)
+- 2026-10-19 Task 138 結果: 学習し直した 3 本は採用 eval と同じ強さ (新しい組で +9 / +1), SWA は効かない; 採用 eval は標準の組で約 16 Elo 低い成績を引いていて, 標準の組の差は甘く出る
+- 2026-10-19 判定方法を案 A に (3 組の seed をまとめて比べる, 作者決定): std_frame.measure_sets / delta_sets, 並列数 8 (同じ結果を確認, 約 2 倍の速さ); 公開されている教師データの調査
+- 2026-10-19 Task 142 事前登録: 公開教師データ (nodchip/shogi_suisho5_depth9 の検証用 724 万局面, MIT) を混ぜる学習と仕上げの学習, 3 組で判定
+- 2026-10-19 Task 142: 混ぜたキャッシュを作るときの最後の区切りの範囲を直す
+- 2026-10-19 Task 142 結果: 公開教師データ (nodchip/shogi_suisho5_depth9, MIT) で採用 eval を 2 周だけ仕上げると 3 組で +29.5 [+15.4, +43.5], 確認の組で +47.3 [+23.5, +71.4] (ADOPT_CANDIDATE); 混ぜて最初から学習は効かない
+- 2026-10-19 採用 eval を task142_finetune に替える (作者承認): STATUS と大会用の設定 (prod_start の sha256 照合, gen_config, check_kachi, 手順書)
+- 2026-10-19 STATUS: 採用 eval の前任の列に task126 を戻す
+- 2026-10-19 Task 143 事前登録: 公開データでの仕上げの条件 (lr 5e-6 / 2e-5, 1 周 / 4 周) を振る; 学習は floodgate 中に GPU で, 判定は後で
+- 2026-10-19 判定の seed の組を作り直す: チャンクの seed を 100 ずつ離して序盤を重ねない (旧組は 1 組 57 種類だけだった); Task 142 の点検 (Codex) は採用を支持; Task 143 の判定は新しい組で (まだ指していない)
+- 2026-10-19 投了の中継の不具合を直す: 経過時間を usinewgame からではなく対局の最初の go から測る (組み合わせ待ちまで数えて早く投了していた); floodgate の試験は基準 -3000 に
+- 2026-10-19 Task 143 結果: 仕上げの条件は lr 1e-5 が良く, 周数は多いほど良い向き (1 周 -17, 4 周 +7), 採用は task142_finetune のまま; Task 144 (Codex): 公開データの 1 ファイルずつを静止局面に置き換えて学習用にまとめる道具; floodgate 6 勝 4 敗
+- 2026-10-20 教師の方針の記録 (作者と相談): 本線は雑巾絞り (自分の探索でラベルを作る), 差を見るため水匠5 の生徒を 1 度作る (Task 145), Hao は物差しと同じなので使わない
+- 2026-10-20 BACKLOG: Task 145 の後に, つようら王11 mini/micro (MIT) を 3 本目の物差しにできるか調べる (作者決定)
+- 2026-10-20 Task 145 事前登録: 水匠5 の生徒 (水匠5 の学習用データの先頭 6,395 万局面でゼロから, 自前と同じレシピ), 自前だけ・採用中と新しい 3 組で比べる (採用を目指すものではない)
+- 2026-10-20 Task 146 (Codex, Claude が修正): 自前の局面を binbo 自身の depth 9 探索で付け直す道具; 局面ごとの初期化 (133ms) を区切りごとに 1 回にして 12 倍速く (8 本で 519 局面/秒, 全 6,395 万行で 12-16 時間の見込み)
+- 2026-10-20 Task 147 事前登録: 雑巾絞りの 1 回目 (自前の局面を binbo の depth 9 で付け直したラベルでゼロから学習, さらに水匠5 で仕上げ), task129 / 採用中と新しい 3 組で比べる
+- 2026-10-20 Task 145b: 水匠5 の生徒を 12 周目の重みで測り直す (Task 145 は検証データ = WS-T のラベルで周を選んだため 1 周目が書き出されていた, 取り決めの誤り)
+- 2026-10-20 Task 145 結果: 水匠5 の生徒は検証データで周を選んだため 1 周目が書き出されていた (測り直し Task 145b を予約); 新しい 3 組でも task142 - task129 = +32.5 [+18.7, +46.4]
+- 2026-10-20 Task 146: ノード数の上限 (--node-cap) を足す; depth 9 が極端に重い局面 (120 秒で終わらない) で付け直し全体が止まったため
+- 2026-10-20 Task 145b: 水匠5 の生徒 (12 周目) は task129 に +102.5, 採用中の task142 に +70.1 (対 AobaNNUE も +79); 強い教師の下駄は約 +100 Elo
+- 2026-10-20 Task 148 (Codex, 調査のみ): ネットワーク構造の候補と費用 (第一候補 HalfKP 512x2-8-96, 次点 HalfKA_hm1)
+- 2026-10-20 見張りページ: Xubuntu ではディスクの空き (学習データの置き場) と RAM を素の Linux の値で, メモリ (VRAM/RAM) とディスクの空きのグラフを足し, 6 つのグラフを同じ幅・同じ時間軸に; CPU 電力は RAPL が読めれば表示. 判定の並列は 8 まで (12 で RAM を使い切った)
+- 2026-10-20 見張りページ: CPU クロック (P / E コア別, 動いているコアの平均, root 不要) を足してディスクの空きのグラフと差し替え, 使用率のグラフから RAM を外す (メモリのグラフと重複), 同じ段階の名前が続くときは 1 回だけ出す
+- 2026-10-20 Task 150 事前登録: 雑巾絞りを採用 eval から続けて学習する形で (64M lr 5e-6 / 64M lr 1e-5 / 無作為 8M lr 1e-5, 各 1 周); 勝敗を混ぜる案は勝敗が分かる行が 0.6% しかないので外した
+- 2026-10-20 Task 147 結果: 雑巾絞りの 1 回目をゼロから学習すると弱い (task129 に -67.6, 仕上げても採用中に -44.9); Codex の点検で不具合なし
+- 2026-10-20 Task 149 (Codex): 広いネット (HalfKP 512x2-8-96) を学習・書き出し・専用エンジン・0cp の確認まで通す (既定の 256 幅は書き出しがバイト一致のまま); 0cp の確認は不一致や行数違いで失敗として終わるように
+- 2026-10-21 Task 150 結果: 雑巾絞りを採用 eval から続けて学習しても強くならない (64M lr5e-6 -8.4, lr1e-5 -14.3, 8M -30.5)
+- 2026-10-21 Task 151: つようら王11micro (MIT) を 3 本目の物差しにできるか, ノード数のはしご (1k-32k, 序盤が重ならない seed) で採用 eval と較正
+- 2026-10-21 Task 151: はしごが 8k (0.827) と 16k (0.510) の間に落ちたので 11k / 12k / 13k を足す
+- 2026-10-21 Task 151: つようら王11micro を較正 (micro @11k で採用 eval の勝率 0.673); Task 150 の原因調査 (Codex): 自前の depth 9 に寄るぶん水匠5 との一致が下がる
+- 2026-10-21 判定: つようら王11micro @11k を採用前の確認だけに使う物差しとして足す (作者決定, 普段の判定は変えない); Task 152: task142 の改善が micro に対しても出るかを 1 回だけ確かめる
+- 2026-10-21 Task 152: task142 の改善は つようら王11micro に対しても +24.7 [+4.0, +45.4] (tanuki- に似ただけではない)
+- 2026-10-21 Task 153 (Codex): binbo 自身の自己対局で勝敗つきの学習データを作る道具 (depth 9, 8 本で約 174 万局面/時)
+- 2026-10-21 Task 154 事前登録: ちゃんとした雑巾絞り (binbo 自身の自己対局 15 万局, depth 9, 詰みを読み切るまで指す, 勝敗つき) で採用 eval から仕上げ, 評価値だけ / 勝敗 3 割の 2 本, 3 組で判定し強ければ新しい組と micro で確認
+- 2026-10-21 Task 154: 自己対局にノード数の上限 1,000 万を足す (depth 9 が 120 秒で終わらない局面で止まったため, 最初の 9,174 局は捨てて作り直し)
+- 2026-10-21 Task 153 assemble: meta.json に val_shards を書く (train_nnue が読むため; Task 154 の学習がここで止まった)
+- 2026-10-21 Task 154: 自己対局 15 万局 (詰みまで, 勝敗つき) で仕上げると 勝敗 3 割の版が +28.6 [+14.3, +42.9], 確認の組でも物差し 2 本 +19.5 / micro +14.0 = ADOPT_CANDIDATE
+- 2026-10-21 採用 eval を task154_R_result30 に更新 (作者承認, nn.bin d1a1cb49…): 大会の起動・設定生成・入玉確認・手順書を差し替え, 入玉宣言の確認 7/7 一致
+- 2026-10-21 文書を現状に合わせる: 採用 eval task154_R_result30 (アピール下書きに公開データの仕上げと自己対局の雑巾絞りを追記, ライセンス帳簿に公開教師データと つようら王11micro, 判定方法に新しい採用 eval の勝率, 教師の方針にその後, バックログに雑巾絞りの 2 周目)
+- 2026-10-21 アピール下書き: 独創賞の主張の主を雑巾絞りに (作者決定), 手法そのものではなく効く形と効かない形を対照つきで確かめたことを主張する
+- 2026-10-21 Task 155 事前登録: 勝敗の割合を振る (Task 154 のデータのまま 5 割 / 1.5 割), 3 組で採用 eval (3 割) と比べ, 強ければ新しい組と micro で確認
+- 2026-10-21 Task 156 (Codex): Task 154 の自己対局データの点検 = 符号・重複・val 漏れは 0, 終局は詰みの読み切り 98.2%; 静止化で捨てた 38% は終盤・終局直前に偏る; 玉は自己対局でも中央寄り; 2 周目は生成と静止化の eval を明示する必要あり
+- 2026-10-21 STATUS: Task 156 の点検結果
+- 2026-10-21 BACKLOG: 全力の技巧2 との持ち時間をそろえた対局 (作者希望)
+- 2026-10-21 Task 157 (Codex): 玉の中央寄りは弱点か = 不明 (評価値をそろえると翼の側の得点率が +0.69pt, 小さい弱点の兆候; micro との比較では確定せず; 雑巾絞りで強まった証拠なし)
+- 2026-10-21 Task 155: 勝敗を混ぜる割合 = 5 割 −21.7 [−36.5, −6.9], 1.5 割 +4.9 [−9.8, +19.7] で NO_BETTER, 3 割のまま
+- 2026-10-21 Task 158 事前登録: 全力の技巧2 との持ち時間をそろえた対局 (1 手 1 秒, 各 1 スレッド, 400 局, P コアに固定, 23:45 で打ち切り)
+- 2026-10-21 アピール下書き: AI エージェントの利用の明記 (§6) と先人への謝辞 (§7) を追加
+- 2026-10-21 Task 158: 全力の技巧2 と 1 手 1 秒で 400 局 = 309 勝 87 敗 4 分, +217 Elo [+179, +261]; 技巧2 の g++ 13 での落ちる不具合 (空の valarray の max) を特定し 1 行修正
+- 2026-10-22 Task 159 事前登録: 雑巾絞りの 2 周目 (採用 eval task154_R_result30 で自己対局 15 万局, 生成も静止化も新しい eval を明示, 別の出力先と seed), 勝敗 3 割で 2 周 / 4 周, 3 組で判定し強ければ新しい組と micro で確認
+- 2026-10-22 Task 159: 雑巾絞りの 2 周目 = 2 周 +12.0 [−3.3, +27.2], 4 周 +5.0 で NO_BETTER (採用は task154_R_result30 のまま)
+- 2026-10-22 floodgate: task154_R_result30 で 4 局 (10/22 朝, binbo_t154) = 4 戦 4 勝
+- 2026-10-22 Task 160 事前登録: 1 周目と 2 周目の自己対局データを合わせて (約 2,000 万局面) task142_finetune から勝敗 3 割で 1 周 / 2 周, 3 組で採用 eval と比べ, 強ければ新しい組と micro で確認
+- 2026-10-22 Task 161 (Codex): 次の方針の相談 (2 周目が小さかった理由の診断, 次の 8 件の優先順, Task 160 の結果ごとの分岐, 大会に向けた隠れたリスク)
+- 2026-10-22 Task 160: 1・2 周目の自己対局データを合わせても 1 周 +2.7, 2 周 +1.9 で NO_BETTER (採用は task154_R_result30 のまま)
+- 2026-10-22 Task 162: 捨てた局面 (静止化で変わった葉) が既存の学習データとどれだけ重なるかを測る (Task 159 の棋譜で changed も残す静止化をやり直して照合)
+- 2026-10-22 Task 162: 捨てた葉 670.6 万個のうち 39.5% は既に学習データにあり, 重複を除いた新しい局面は 318 万個 (終局 7 手以内では 59% が新しい)
+- 2026-10-22 Task 163 事前登録: 捨てた葉のうち新しい 318 万局面に depth 9 でラベルを付け直して 2 周目のデータに足す (勝敗は混ぜない), +100 万 / +全部 の 2 本, 3 組で採用 eval と比べ, 対照 (task159_R30_e2) との差も記録
+- 2026-10-22 Task 163: 学習用キャッシュを作るときの区切りの不具合を直す (元データの末尾で書き込み先の範囲が長すぎた)
+- 2026-10-22 Task 163: 捨てた葉 318 万局面を depth 9 で付け直して戻しても +4.4 / +5.7 で NO_BETTER (足さない対照より −6〜−8)
+- 2026-10-22 データの片付けを記録 (10/22, 作者承認, 約 21.6GB)
+- 2026-10-22 Task 164 事前登録: 深いラベル (depth 11) と新しく読んだ depth 9 を同じ 300 万局面で比べる (2 周目のデータの 3 割のラベルを差し替え, 採用 eval から勝敗 3 割で 2 周)
+- 2026-10-22 Task 164: 深いラベル (depth 11) と depth 9 を同じ 300 万局面で比べても D11 − D9 = +1.8 [−13.2, +16.9] で NO_BETTER
+- 2026-10-22 本番準備 (10/22 夕方): floodgate 3 局 (1 勝 2 敗, 異常 0), 本番の設定の点検 (手順書どおり), 再起動後の時計の測り直し (ずれ 0.01% 以下, 跳び 0)
+- 2026-10-22 Task 165 の下見 P1: 作者の別の自作探索とやねうら王 を同じ binbo の eval で 1 手 1 秒・1 スレッド, 96 局
+- 2026-10-22 Task 166 (方針の検討のための下見 P5): 水匠5 の生徒 (採用 eval に +41.5) の上に自己対局の雑巾絞りが積み上がるか (1 周目 / 2 周目のデータ, 勝敗 3 割で 2 周)
+- 2026-10-22 Task 167 (Codex, 大会に向けた方針の検討): GPU の方策が αβ の見落としを救えるか / 計算の配分に余地があるかを測る道具 (標本・探索・方策・集計)
+- 2026-10-23 Task 168 (大会に向けた方針の検討): 水匠5 の生徒 + 2 周目の雑巾絞り (採用 eval に +69.1) を新しい組と micro で確認
+- 2026-10-23 大会に向けた方針の検討 (10/22〜23): 方針の下書き, Codex の独立の検討, 下見の記録 (水匠5 の生徒 + 雑巾絞りで +69〜76, 自作探索 −500, GPU の救済は狭い, 配分の余地は安い規則では取れない)
+- 2026-10-23 方針 (10/23 朝): Codex の反証を取り込む (±15 の言い過ぎ, 下見の余地は独立局面のノード配分で時間管理ではない, 実装できる上限 23.0cp, S_R2 の出自, C は未検証, 11/09〜13 の段取りと早めの申込)
+- 2026-10-23 方針 (10/23 朝): 多エージェントの 3 計画を取り込む (速いビルド, 待機機, 引き分けの値の初期案, アピールの見出しは雑巾絞りから外す案, 11/07 提出), 検討の原文を保存
+- 2026-10-23 方針 (10/23 朝): 最終の審査役の指摘を取り込む (GPU 案の事後の得 +6.0cp はほぼ 2 局面から, 待機機は次の対局しか救えない, 先手の定跡の根拠), 事後解析のスクリプトを保存
+- 2026-10-23 Task 169 事前登録: GPU 案の関門 0 (昨夜の事後の得が新しい 1,536 局面で再現するか, 実装できる版の削減の 95% CI 下限 > 0 で合格)
+- 2026-10-23 Task 169: GPU 案の関門 0 = 合格 (新しい 1,536 局面で方策との一致・不一致による配分が +4.6cp [+0.7, +9.8], 探索の数値だけの規則は +0.5)
+- 2026-10-23 Task 170 事前登録: GPU 案の関門 1 (探索の数値だけの予測器 S と, GPU の方策の特徴を足した予測器 G を, 対局単位の 5 分割で比べる)
+- 2026-10-23 Task 170: GPU 案の関門 1 = 不合格 (予測器 G +5.0 [−0.9, +11.1], 探索だけ S との差 +3.0 [−3.3, +9.4]), 大会向けは打ち切り
+- 2026-10-23 Task 171: 本物の水匠5 (手元で対局させるだけ) と水匠5 の生徒・採用 eval を同じ 3 組で比べる
+- 2026-10-23 Task 171: 本物の水匠5 は水匠5 の生徒より約 +300〜370 上 (手元で対局させるだけ, 物差しに 0.97 / 0.94)
+- 2026-10-23 Task 172 計画の下書き (自前の系統の土台を自己対局のデータ込みでゼロから作り直す), Codex のレビュー待ち
+- 2026-10-23 Task 172 計画の Codex レビュー (A の勝敗を混ぜない, 歩数をそろえた対照, 複数キャッシュを読む学習器, 全件の重複・漏れ監査)
+- 2026-10-23 訂正: 技巧2 由来の学習データで勝敗の分かる行は 0.6% ではなく約 78% (Task 147 / 150 の記述の誤り, Task 111 の 76.7% と一致)
+- 2026-10-23 Task 173 (Codex): WS-T2 の道具 (自己対局から WS-T を追加学習, 関門の局面の対局を除外, 1,184 局面で旧版と比較)
+- 2026-10-23 Task 173: ノード上限で depth 9 に届かなかった行 (約 400 行) は止めずに数えて飛ばす
+- 2026-10-23 Task 173: 記録する局面のない対局 (15 手で終わった 1 局) は番号を残して飛ばす
+- 2026-10-23 Task 172 (Codex): 複数のキャッシュを 1 つとして読む学習器, 歩数で止める --max-steps, 勝敗を混ぜたラベルと全件の重複・漏れ監査, C/R/W と軽い仕上げ・判定を通しで回す runner (CPU テスト 9 件, 使わないときは重みがバイト一致)
+- 2026-10-23 データの片付けを記録 (10/23, 水匠5 の生徒の学習用データ 28GB を削除, 元データは残す)
+- 2026-10-23 アピール下書き: 見出しを雑巾絞りから「強さの出どころを分けて測った」測定上の発見へ (探索と教師の分離, 別の教師の上にも積み上がる絞り, GPU の食い違いの小さな結果, 訂正も含む記録)
+- 2026-10-23 Codex 3 件 (10/23 夜, 無駄を省く): Task 174 WS-T2 の入力生成を 22 倍に (観測・合法手はビット一致), Task 175 引き分けの値の候補 (先手 −60 / 後手 +60) と技巧2 側の重複 (23.6%, 主に静止化の葉への合流), Task 176 判定の早期打ち切りで主判定の局数を約 30〜45% 減らす案
+- 2026-10-23 Task 174: GPU の実測 (bf16・batch 256 で 4,763 局面/秒, 旧版の約 3.5 倍, 律速は GPU の計算に移った)
+- 2026-10-23 Task 177 事前登録: WS-T2 を 3,238 万局面すべてで学習 (速い版, 先に FP32 と bf16 の同等性を 2,000 歩で確かめて精度を選ぶ)
+- 2026-10-24 遊休の Xeon 機を計算に使う入口を記録 (非特権ユーザー binbo, 専用の鍵)
+- 2026-10-24 Task 172: 自前の土台の作り直しは NO_BETTER (自己対局を最初から混ぜる −29.2, 技巧2 の勝敗を混ぜる −98.2, 符号の誤りではない)
+- 2026-10-24 Task 177: WS-T2 を全データで学習しても判定の一致 48.2% (1/4 で 47.8%), ほぼ頭打ち, 大会までの教師には使わない
+- 2026-10-24 Task 179 事前登録: 雑巾絞りのあとに水匠5 の軽い仕上げを掛け直す (F154 / F159), 判定の半分を Xeon で指す道具 (xeon_frame.py)
+- 2026-10-24 Task 179 の下見: 重みの平均 (soup) の道具。採用 eval の子 5 本の差分は向きがほぼ同じ (cos 0.75〜0.98, 平均の大きさは個々の 95%) で, 平均しても task159 とほぼ同じなので判定しない
+- 2026-10-24 xeon_frame: 並列を 20 に (1 局 約 2.45GB), Xeon の空きメモリが足りるまで待つ
+- 2026-10-24 Task 181 事前登録: 2 周目の自己対局と水匠5 の軽い仕上げを混ぜて 1 回で仕上げる (M), xeon_frame に Xeon の排他と空きメモリ待ち, Xeon で判定を指す手順を記録
+- 2026-10-24 Xeon で指した対局は 14700KF と同じ (採用 eval の 4 チャンク 400 局で勝敗・手数・ノード数・序盤が一致, 違いは 1 局の平均の深さの表示 14.53/14.55 だけ)
+- 2026-10-24 Task 178 (Codex): 大会用やねうら王を AVX-VNNI + PGO でビルドすると 28 スレッドで NPS +8.1% [+6.0, +10.2], bench のノード数・4 局面の手とノード数・静的評価 2,086 局面が現行と一致 (置き換えは作者の承認待ち)
+- 2026-10-24 STATUS: Task 178 (速いビルド +8.1%) と Xeon で判定を指す入口 (14700KF と同じ結果) を記録
+- 2026-10-24 Task 178: B2 で指し直した 100 局が既存の記録と一致 (違いは深さの表示の 3 局だけ, 替えていない側にも出る)
+- 2026-10-24 Task 180 (Codex): 先手 3 分の時計の使い方 (やねうら王の時間配分の式, 定跡なしの先手は序盤 15 手で 90.5 秒), 時計つき対局の道具と中継, 縮小した時計での実験を事前登録 (4,000 序盤 × 3 条件に改訂)
+- 2026-10-24 Task 179: 水匠5 の仕上げの掛け直しは NO_BETTER (F154 −0.8, F159 +8.4) の前に, Task 180 の事前登録の改訂 2 (2 台に分ける, 同じ 4,000 序盤)
+- 2026-10-24 Task 179: 雑巾絞りのあとに水匠5 の仕上げを掛け直しても NO_BETTER (F154 −0.8 [−15.7, +14.0], F159 +8.4 [−6.4, +23.2])
+- 2026-10-24 Task 180b (Codex): 2 台の時計の実験を合わせて集計する道具を結果を見る前に固定 (マシンで層別した序盤単位の bootstrap, 合成データの試験 9 件)
+- 2026-10-24 Task 180 事前登録の改訂 3 (結果を見る前): 時計の対局は 1 枠あたりの速さが同じなので枠の数で配り直す (14700KF 1,333 序盤 24 並列 / Xeon 2,667 序盤 48 並列, 合わせて同じ 4,000 序盤)
+- 2026-10-24 Task 180: 待機中のエンジンが落ちると実験全体が止まる不具合を直す (独立の点検で発見, 再現する試験つき), cap30 の K を 17 に (実際に読む先手の最初の 15 手 = 本番と同じ), 事前登録の改訂 4
+- 2026-10-24 Task 180: 改訂 4 の時刻の記録を実際の 03:23 に直す
+- 2026-10-24 Task 181: 混ぜて仕上げた M が主判定に合格 (+22.4 [+7.6, +37.4]), 確認は時計の実験の後に t181_confirm.py で指す
+- 2026-10-24 STATUS: Task 181 の主判定 +22.4 [+7.6, +37.4] (確認待ち)
+- 2026-10-24 Task 182 事前登録: 混ぜた仕上げ M の変種 (4 周の M4, 1 周目の自己対局も混ぜる MR), 判定は時計の実験と M の確認の後
+- 2026-10-24 Task 181: M の独立の点検 (誤り・漏れなし, 兄弟の版より +17.2 [+5.8, +28.2], ただし絞りだけとの差は未確定, 確認の決まりは緩い) を記録
+- 2026-10-24 Task 178: 速いビルドを永続の置き場にコピーし, 本番に入れるときの手順を記録 (本番の設定はまだ変えない)
+- 2026-10-24 Task 181: 混ぜて仕上げた M は確認の組でも正 (物差し 2 本 +18.4 [−6.8, +43.8], micro +75.8 [+36.6, +115.4]) = ADOPT_CANDIDATE (採用は作者の承認待ち)
+- 2026-10-24 Task 180: 先手の時計の実験 12,000 局 = cap30 +0.019 [+0.002, +0.036], slow70 +0.036 [+0.018, +0.054] で 2 つとも合格 (縮小した時計, ponder なし, 本番の大きさではない)
+- 2026-10-24 Task 183: 採用 eval の系統で水匠5 の公開データがどれだけ効いているか (更新は 3.5% だが最初の仕上げで評価値が土台と生徒の距離の 3/4 動き, 伸びの約半分, M は生徒に近づいていない)
+- 2026-10-24 Task 182: 混ぜた仕上げの変種 M4 +25.9, MR +31.3 (M との差は区別できない), STATUS に Task 183 の要点
+- 2026-10-24 決定 (10/24, 作者): 大会の土台を水匠5 の生徒にする, 技巧2 からの系統はいったん止める
+- 2026-10-24 計画 (生徒を土台に大会まで), Task 184 事前登録 (生徒に混ぜた仕上げ), Task 185 (S_R2 どうしの自己対局 15 万局を Xeon で)
+- 2026-10-24 t153: プロセス数の上限をそのマシンの論理コア数に (Xeon で 48 プロセス, 14700KF は今までどおり 28)
+- 2026-10-24 Task 185: Xeon で作った自己対局は 14700KF と同じ (4 局の中身が一致, 違いは置き場所のパスだけ)
+- 2026-10-24 採用 eval を task166_S_R2 に替える (10/24, 作者承認): 水匠5 の生徒 + binbo の自己対局での絞り, prod_start.sh / gen_config.py / check_kachi.py / 手順書 / USED_COMPONENTS の出自を更新
+- 2026-10-24 技巧2 の系統の学習用の素材 (約 46GB) を Xeon の HDD へ退避 (sha256 全一致, 検証用 5 万局面は手元に残す, 手元の空き 22GB → 65GB)
+- 2026-10-24 Task 184: 生徒に混ぜた仕上げ S_MR が ADOPT_CANDIDATE (S_R2 に +19.7 [+2.6, +36.9], 確認の組 +28.0 / micro +3.6), 物差しが飽和してきた
+- 2026-10-24 採用 eval を task184_S_MR に替える (10/24 午後, 作者承認): 生徒 + 自己対局と公開データを混ぜた仕上げ
+- 2026-10-24 Task 186 事前登録: 物差しの較正し直し (S_MR に合わせて tanuki- / AobaNNUE / micro のはしご, 各段 208 局), std_frame のファイル名に実際のノード数を入れる
+- 2026-10-24 Task 186: 事前登録の時刻を実際の 13:53 に直す
+- 2026-10-24 Task 186: はしごの結果 (tanuki- は 4 万で範囲内, AobaNNUE と micro は範囲外) と, 中間の段 (AobaNNUE 1.4 万, micro 1.55 万) を足す手順を結果を見る前に固定
+- 2026-10-24 Task 186b: 前の段の得点は対局の記録から計算する
+- 2026-10-24 Task 186: 新しい物差し = tanuki- @4 万, AobaNNUE @1.4 万, micro @1.55 万 (S_MR の得点率 0.620 / 0.596 / 0.618), std_frame と判定方法を更新, Task 187 の実行役
+- 2026-10-24 Task 187 事前登録: 生徒の系統の最初の自己対局で S_MR を絞る (R3M / R3MR, 新しい物差しで判定), xeon_frame は排他を取ってから数えて持ち帰る
+- 2026-10-24 Task 187: 事前登録の時刻を実際の 14:36 に直す
+- 2026-10-24 S_MR で本番の通し試験 2 局 (2 勝, 時間切れ・反則・異常 0, 最小の残り 先手 5 秒 / 後手 37 秒), STATUS に新しい物差し
+- 2026-10-24 Task 187: 生徒の系統の最初の自己対局で S_MR を絞っても NO_BETTER (R3M −2.8, R3MR −7.5, 新しい物差し), Task 186 の新しい基準の対局を記録
+- 2026-10-24 本番のやねうら王を速いビルド (AVX-VNNI + PGO, ソース無改変, Task 178) に替え, sha256 の点検を足す (作者承認)
+- 2026-10-24 Task 188 の下ごしらえ: 水匠5 の公開データを 2 倍 (6,395 万 × 2) にして 2 つのキャッシュに (前半は前回と一致を確かめる), 場所を空けるために WS-T2 の作業データも Xeon の HDD へ
+- 2026-10-24 Task 188 事前登録: 水匠5 の公開データを 2 倍にした生徒 S2 と, その仕上げ S2_MR を S_MR と比べる
+- 2026-10-24 Task 188a (Codex): 学習器に --chunk-manifests (周ごとに GPU に載せるデータを替え, Adam・乱数・周を持ち越す), 1 チャンクと既存経路はバイト一致, GPU で載せ替えを確認
+- 2026-10-24 Task 188 の実行役: 2 倍のデータの生徒 S2 (チャンクを載せ替えて 12 周) → S_MR と同じ仕上げ → S_MR と比べる
+- 2026-10-25 速いビルドでの通し試験 2 局 (2 勝, 時間切れ・反則・異常 0, 先手の最小の残り 62 秒)
+- 2026-10-25 Task 188: 公開データを 2 倍にした生徒 S2_MR が ADOPT_CANDIDATE (S_MR に +24.4 [+10.5, +38.3], 確認の組 +20.0 / micro +33.8)
+- 2026-10-25 採用 eval を task188_S2_MR に替える (10/25, 作者承認): 公開データ 2 倍の生徒 + 混ぜた仕上げ
+- 2026-10-25 アピール下書き: 「家庭用 PC 1 台で」は誤りなので直す (作者の指摘)
+- 2026-10-25 公開前監査に決定事項を追記 (2026-10-25, 作者): 新しい履歴で公開・経緯は文書で持ち込む・非公開履歴への参照は持ち込まない

@@ -1,0 +1,4 @@
+# シェルスクリプトとフックは LF に固定する (CRLF だと shebang と set -eu が壊れる)
+*.sh text eol=lf
+.githooks/* text eol=lf
+*.py text eol=lf

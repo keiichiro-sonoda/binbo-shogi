@@ -1,0 +1,1997 @@
+{
+  "task": 156,
+  "date": "2026-10-21",
+  "resource_policy": {
+    "max_concurrent_compute_processes": 2,
+    "threads_per_process": 1,
+    "gpu": false,
+    "peak_bulk_combined_rss_upper_mib": 5052.56640625,
+    "engine_qsearch_roots": 180,
+    "engine_regular_searches": 1
+  },
+  "definitions": {
+    "ply": "already played half-moves, zero-based",
+    "score": "Yane internal Value, STM",
+    "bias_buckets": "upper exclusive; inf is final bucket; distance 0 is terminal searched root",
+    "kings": "physical files/ranks 1..9; denominators are games reaching that ply",
+    "castle": "wing files 1..3 or 7..9 AND home three ranks; descriptive proxy, no guard-piece requirement",
+    "ibisha": "exactly one unpromoted own rook on home four ranks, on files 1..3 black / 7..9 white",
+    "furibisha": "same rook condition, files 4..9 black / 1..6 white"
+  },
+  "raw": {
+    "mode": "raw",
+    "seed": 20271560,
+    "sample_ids_file": "sample_game_ids.npy",
+    "games": 150000,
+    "termination": {
+      "eval_limit": 147243,
+      "max_ply_draw": 1303,
+      "repetition_draw": 1453,
+      "declaration_27_win": 1
+    },
+    "winners": {
+      "1": 73040,
+      "0": 74204,
+      "-1": 2756
+    },
+    "length": {
+      "n": 150000,
+      "mean": 126.31588,
+      "quantiles": {
+        "min": 15.0,
+        "p10": 83.0,
+        "p25": 100.0,
+        "p50": 120.0,
+        "p75": 145.0,
+        "p90": 174.0,
+        "p95": 198.0,
+        "p99": 304.0,
+        "max": 320.0
+      }
+    },
+    "length_histogram": {
+      "94": 1472,
+      "116": 1858,
+      "320": 1303,
+      "154": 865,
+      "115": 1938,
+      "90": 1288,
+      "91": 1274,
+      "123": 1778,
+      "170": 552,
+      "112": 1815,
+      "106": 1947,
+      "103": 1826,
+      "130": 1690,
+      "101": 1697,
+      "132": 1559,
+      "113": 1811,
+      "153": 944,
+      "119": 1796,
+      "93": 1457,
+      "194": 229,
+      "129": 1682,
+      "58": 211,
+      "159": 784,
+      "52": 121,
+      "148": 1091,
+      "96": 1527,
+      "79": 818,
+      "102": 1712,
+      "99": 1610,
+      "152": 930,
+      "124": 1747,
+      "149": 1084,
+      "67": 363,
+      "185": 323,
+      "145": 1171,
+      "117": 1838,
+      "291": 16,
+      "142": 1254,
+      "105": 1852,
+      "139": 1348,
+      "146": 1108,
+      "80": 801,
+      "97": 1612,
+      "128": 1574,
+      "151": 970,
+      "95": 1449,
+      "140": 1331,
+      "87": 1094,
+      "65": 313,
+      "111": 1809,
+      "86": 1175,
+      "32": 22,
+      "161": 763,
+      "84": 1049,
+      "203": 158,
+      "141": 1268,
+      "126": 1749,
+      "138": 1315,
+      "191": 265,
+      "75": 626,
+      "202": 165,
+      "211": 114,
+      "316": 11,
+      "82": 916,
+      "267": 33,
+      "114": 1862,
+      "135": 1439,
+      "210": 136,
+      "59": 213,
+      "100": 1730,
+      "178": 380,
+      "92": 1418,
+      "176": 417,
+      "136": 1399,
+      "118": 1818,
+      "120": 1853,
+      "74": 540,
+      "164": 660,
+      "150": 1026,
+      "131": 1554,
+      "167": 590,
+      "110": 1944,
+      "122": 1791,
+      "192": 272,
+      "83": 999,
+      "177": 408,
+      "104": 1806,
+      "155": 875,
+      "147": 1146,
+      "98": 1637,
+      "107": 1828,
+      "89": 1245,
+      "162": 703,
+      "260": 34,
+      "166": 614,
+      "175": 412,
+      "133": 1585,
+      "143": 1208,
+      "56": 147,
+      "109": 1861,
+      "171": 518,
+      "127": 1717,
+      "125": 1745,
+      "172": 505,
+      "186": 289,
+      "134": 1489,
+      "223": 87,
+      "206": 150,
+      "108": 1878,
+      "54": 159,
+      "179": 379,
+      "198": 208,
+      "180": 401,
+      "197": 190,
+      "88": 1203,
+      "47": 77,
+      "160": 725,
+      "215": 98,
+      "76": 680,
+      "182": 349,
+      "81": 893,
+      "121": 1795,
+      "193": 226,
+      "262": 34,
+      "163": 621,
+      "78": 730,
+      "72": 533,
+      "49": 91,
+      "208": 133,
+      "69": 417,
+      "173": 494,
+      "51": 110,
+      "144": 1117,
+      "137": 1372,
+      "63": 290,
+      "157": 822,
+      "61": 255,
+      "195": 231,
+      "253": 39,
+      "156": 811,
+      "188": 280,
+      "254": 32,
+      "247": 52,
+      "189": 282,
+      "246": 44,
+      "45": 71,
+      "165": 567,
+      "66": 339,
+      "181": 348,
+      "174": 481,
+      "257": 22,
+      "85": 1111,
+      "48": 92,
+      "234": 57,
+      "289": 15,
+      "68": 392,
+      "46": 82,
+      "70": 476,
+      "71": 493,
+      "251": 28,
+      "158": 848,
+      "212": 139,
+      "77": 674,
+      "50": 104,
+      "190": 257,
+      "60": 219,
+      "64": 283,
+      "222": 89,
+      "57": 171,
+      "62": 264,
+      "28": 14,
+      "196": 235,
+      "205": 159,
+      "293": 20,
+      "183": 342,
+      "200": 191,
+      "169": 528,
+      "37": 37,
+      "204": 148,
+      "296": 20,
+      "187": 284,
+      "224": 66,
+      "184": 302,
+      "73": 549,
+      "220": 93,
+      "168": 538,
+      "53": 121,
+      "231": 69,
+      "38": 39,
+      "237": 55,
+      "250": 32,
+      "268": 34,
+      "36": 29,
+      "209": 130,
+      "219": 95,
+      "199": 179,
+      "298": 14,
+      "256": 31,
+      "255": 22,
+      "225": 73,
+      "218": 98,
+      "240": 40,
+      "271": 24,
+      "280": 26,
+      "238": 45,
+      "228": 76,
+      "207": 141,
+      "55": 140,
+      "217": 95,
+      "201": 176,
+      "26": 11,
+      "213": 115,
+      "266": 25,
+      "230": 76,
+      "242": 43,
+      "249": 38,
+      "235": 49,
+      "43": 57,
+      "282": 16,
+      "259": 20,
+      "30": 16,
+      "272": 21,
+      "241": 44,
+      "214": 117,
+      "236": 64,
+      "221": 73,
+      "229": 72,
+      "286": 29,
+      "303": 15,
+      "302": 13,
+      "304": 20,
+      "319": 20,
+      "277": 24,
+      "40": 49,
+      "275": 19,
+      "226": 72,
+      "245": 37,
+      "263": 24,
+      "233": 61,
+      "265": 24,
+      "41": 53,
+      "313": 23,
+      "216": 115,
+      "284": 17,
+      "264": 27,
+      "281": 15,
+      "42": 52,
+      "29": 16,
+      "297": 20,
+      "35": 30,
+      "39": 47,
+      "292": 15,
+      "258": 30,
+      "232": 72,
+      "227": 66,
+      "295": 11,
+      "300": 12,
+      "287": 12,
+      "27": 10,
+      "31": 13,
+      "248": 39,
+      "269": 21,
+      "299": 15,
+      "279": 27,
+      "261": 28,
+      "314": 16,
+      "244": 46,
+      "274": 20,
+      "34": 23,
+      "270": 22,
+      "288": 9,
+      "243": 35,
+      "33": 23,
+      "239": 49,
+      "252": 44,
+      "301": 18,
+      "285": 12,
+      "44": 66,
+      "307": 13,
+      "315": 8,
+      "273": 24,
+      "312": 8,
+      "283": 22,
+      "290": 13,
+      "318": 13,
+      "24": 6,
+      "21": 5,
+      "278": 29,
+      "16": 3,
+      "294": 13,
+      "276": 19,
+      "309": 15,
+      "25": 4,
+      "311": 5,
+      "317": 13,
+      "308": 11,
+      "306": 11,
+      "23": 6,
+      "310": 9,
+      "305": 9,
+      "18": 1,
+      "22": 1,
+      "20": 1,
+      "15": 1
+    },
+    "opening_lengths": {
+      "6": 13606,
+      "9": 13456,
+      "16": 13429,
+      "10": 13780,
+      "15": 13736,
+      "12": 13543,
+      "7": 13472,
+      "11": 13867,
+      "8": 13766,
+      "14": 13684,
+      "13": 13661
+    },
+    "mate_read_length": {
+      "n": 147242,
+      "mean": 9.014065280286875,
+      "quantiles": {
+        "min": 1.0,
+        "p10": 5.0,
+        "p25": 7.0,
+        "p50": 9.0,
+        "p75": 11.0,
+        "p90": 12.0,
+        "p95": 14.0,
+        "p99": 16.0,
+        "max": 27.0
+      }
+    },
+    "mate_read_signed_histogram": {
+      "-8": 18104,
+      "9": 23644,
+      "-10": 21999,
+      "11": 13652,
+      "5": 12470,
+      "-12": 10871,
+      "7": 23526,
+      "13": 5220,
+      "-16": 1381,
+      "15": 1495,
+      "3": 2500,
+      "-6": 6009,
+      "-14": 4321,
+      "-4": 762,
+      "-22": 29,
+      "-18": 392,
+      "-20": 110,
+      "19": 126,
+      "17": 539,
+      "1": 43,
+      "23": 8,
+      "21": 28,
+      "27": 1,
+      "-26": 2,
+      "-2": 4,
+      "-24": 5,
+      "25": 1
+    },
+    "openings": {
+      "16": {
+        "n": 149999,
+        "distinct": 149985,
+        "max_multiplicity": 2,
+        "duplicate_rows": 14
+      },
+      "24": {
+        "n": 149982,
+        "distinct": 149970,
+        "max_multiplicity": 2,
+        "duplicate_rows": 12
+      },
+      "32": {
+        "n": 149892,
+        "distinct": 149881,
+        "max_multiplicity": 2,
+        "duplicate_rows": 11
+      }
+    },
+    "kings": {
+      "30": {
+        "0": {
+          "6,8": 27185,
+          "5,9": 46118,
+          "4,9": 6505,
+          "3,8": 3113,
+          "6,7": 432,
+          "2,8": 2117,
+          "5,8": 18192,
+          "6,9": 9920,
+          "7,8": 11670,
+          "4,8": 13122,
+          "5,7": 478,
+          "7,9": 3442,
+          "3,7": 1734,
+          "3,9": 2724,
+          "8,8": 500,
+          "8,7": 161,
+          "1,9": 356,
+          "2,9": 331,
+          "4,7": 1056,
+          "7,7": 270,
+          "4,6": 17,
+          "6,6": 11,
+          "9,9": 11,
+          "2,7": 271,
+          "8,9": 72,
+          "5,6": 13,
+          "9,8": 13,
+          "8,6": 10,
+          "1,8": 33,
+          "3,6": 12,
+          "7,6": 18,
+          "2,6": 11,
+          "9,5": 1,
+          "7,5": 1,
+          "1,6": 1
+        },
+        "1": {
+          "4,2": 26830,
+          "4,1": 9970,
+          "6,2": 12783,
+          "5,1": 47638,
+          "3,2": 11589,
+          "6,1": 6014,
+          "3,1": 3687,
+          "8,3": 282,
+          "5,2": 17614,
+          "8,2": 2161,
+          "4,3": 352,
+          "6,3": 963,
+          "9,1": 386,
+          "5,3": 458,
+          "7,3": 1690,
+          "7,2": 3113,
+          "8,1": 319,
+          "7,1": 2906,
+          "3,3": 275,
+          "5,4": 17,
+          "2,3": 126,
+          "2,2": 497,
+          "9,2": 31,
+          "2,1": 100,
+          "8,4": 10,
+          "1,1": 18,
+          "6,4": 13,
+          "2,4": 15,
+          "3,4": 18,
+          "4,4": 9,
+          "1,2": 8,
+          "7,4": 22,
+          "6,5": 2,
+          "1,4": 1,
+          "7,6": 1,
+          "9,3": 2,
+          "9,4": 1
+        }
+      },
+      "40": {
+        "0": {
+          "6,9": 10373,
+          "5,9": 34208,
+          "4,9": 5951,
+          "3,8": 3962,
+          "8,7": 382,
+          "2,8": 3831,
+          "5,8": 19236,
+          "6,8": 25441,
+          "7,8": 15498,
+          "4,7": 1328,
+          "7,9": 6318,
+          "4,8": 12165,
+          "3,9": 3377,
+          "3,7": 1480,
+          "8,8": 1508,
+          "9,9": 110,
+          "8,9": 428,
+          "2,9": 635,
+          "5,7": 672,
+          "1,9": 782,
+          "7,7": 488,
+          "6,7": 598,
+          "1,8": 59,
+          "5,6": 35,
+          "2,7": 481,
+          "6,6": 33,
+          "9,8": 51,
+          "2,6": 28,
+          "7,6": 43,
+          "8,6": 24,
+          "4,6": 36,
+          "9,6": 3,
+          "1,7": 12,
+          "3,6": 42,
+          "9,7": 8,
+          "5,5": 3,
+          "3,4": 1,
+          "3,5": 1,
+          "4,5": 3,
+          "7,5": 4,
+          "6,5": 3,
+          "5,4": 1
+        },
+        "1": {
+          "4,2": 25248,
+          "4,1": 10629,
+          "6,2": 11786,
+          "5,1": 35591,
+          "3,2": 15026,
+          "5,2": 18724,
+          "3,1": 6591,
+          "8,3": 531,
+          "8,2": 3766,
+          "7,1": 3456,
+          "4,3": 512,
+          "6,1": 5754,
+          "7,4": 39,
+          "9,1": 777,
+          "5,3": 668,
+          "7,2": 4005,
+          "3,3": 479,
+          "8,1": 597,
+          "6,3": 1199,
+          "2,2": 1550,
+          "7,3": 1413,
+          "6,4": 44,
+          "2,3": 369,
+          "2,1": 485,
+          "4,4": 29,
+          "1,1": 105,
+          "3,4": 40,
+          "2,4": 26,
+          "1,4": 1,
+          "1,2": 58,
+          "9,2": 55,
+          "5,4": 42,
+          "9,3": 10,
+          "8,4": 18,
+          "1,3": 3,
+          "6,5": 4,
+          "4,5": 3,
+          "4,6": 1,
+          "1,5": 1,
+          "5,5": 2,
+          "7,5": 2,
+          "2,5": 1,
+          "9,4": 1,
+          "3,5": 1
+        }
+      },
+      "60": {
+        "0": {
+          "5,9": 21002,
+          "4,9": 5722,
+          "2,9": 971,
+          "7,6": 174,
+          "2,8": 5616,
+          "5,8": 18548,
+          "6,8": 20718,
+          "7,9": 9026,
+          "7,8": 16382,
+          "3,8": 5568,
+          "6,9": 10186,
+          "4,8": 11721,
+          "3,9": 3881,
+          "3,7": 1321,
+          "5,7": 1434,
+          "8,8": 4287,
+          "8,7": 845,
+          "9,9": 424,
+          "8,9": 1078,
+          "1,9": 1090,
+          "7,7": 1320,
+          "6,7": 1432,
+          "4,7": 1919,
+          "6,6": 219,
+          "2,7": 828,
+          "3,6": 188,
+          "9,6": 35,
+          "9,8": 258,
+          "8,5": 17,
+          "5,6": 207,
+          "1,7": 74,
+          "9,7": 70,
+          "8,6": 147,
+          "4,6": 201,
+          "1,4": 3,
+          "7,4": 12,
+          "1,3": 3,
+          "1,8": 240,
+          "3,4": 8,
+          "8,1": 1,
+          "6,5": 26,
+          "2,6": 99,
+          "2,3": 2,
+          "2,5": 17,
+          "4,5": 19,
+          "1,6": 28,
+          "1,5": 3,
+          "4,4": 2,
+          "3,5": 22,
+          "7,5": 20,
+          "9,5": 6,
+          "5,5": 20,
+          "6,4": 2,
+          "2,4": 3,
+          "8,4": 3,
+          "5,4": 4,
+          "3,2": 1,
+          "9,4": 1,
+          "9,3": 1
+        },
+        "1": {
+          "4,2": 20672,
+          "3,1": 9207,
+          "7,1": 4033,
+          "3,2": 16028,
+          "5,1": 21880,
+          "3,3": 1338,
+          "2,2": 4142,
+          "5,2": 17784,
+          "4,1": 10587,
+          "7,4": 191,
+          "8,2": 5442,
+          "7,2": 5559,
+          "8,3": 881,
+          "4,3": 1322,
+          "6,1": 5776,
+          "6,2": 11635,
+          "6,3": 1967,
+          "2,1": 1148,
+          "1,1": 395,
+          "9,1": 1063,
+          "2,3": 830,
+          "8,1": 873,
+          "5,3": 1502,
+          "1,2": 259,
+          "9,3": 81,
+          "7,3": 1281,
+          "5,5": 23,
+          "4,4": 205,
+          "5,4": 216,
+          "3,5": 24,
+          "8,4": 116,
+          "9,2": 243,
+          "6,4": 202,
+          "2,4": 133,
+          "6,5": 26,
+          "3,4": 147,
+          "4,5": 25,
+          "1,3": 70,
+          "1,4": 27,
+          "2,5": 20,
+          "9,4": 18,
+          "4,6": 4,
+          "7,5": 19,
+          "8,5": 17,
+          "6,6": 3,
+          "5,6": 4,
+          "8,6": 2,
+          "3,6": 5,
+          "9,5": 7,
+          "9,7": 2,
+          "1,5": 6,
+          "7,6": 5,
+          "1,6": 3,
+          "8,7": 1,
+          "2,6": 4,
+          "3,7": 1,
+          "7,7": 1
+        }
+      }
+    },
+    "structures": {
+      "30:0:ibisha": {
+        "n": 85431,
+        "left_wing": 12071,
+        "right_wing": 1863,
+        "either_wing_home3": 13905,
+        "opposite_rook_wing_home3": 12053
+      },
+      "30:1:ibisha": {
+        "n": 86062,
+        "left_wing": 12381,
+        "right_wing": 1806,
+        "either_wing_home3": 14145,
+        "opposite_rook_wing_home3": 12357
+      },
+      "40:0:ibisha": {
+        "n": 77580,
+        "left_wing": 17175,
+        "right_wing": 1956,
+        "either_wing_home3": 19051,
+        "opposite_rook_wing_home3": 17130
+      },
+      "40:1:other": {
+        "n": 37363,
+        "left_wing": 4041,
+        "right_wing": 2278,
+        "either_wing_home3": 6286,
+        "opposite_rook_wing_home3": 0
+      },
+      "60:0:other": {
+        "n": 59653,
+        "left_wing": 11519,
+        "right_wing": 7653,
+        "either_wing_home3": 18793,
+        "opposite_rook_wing_home3": 0
+      },
+      "60:1:other": {
+        "n": 59525,
+        "left_wing": 11565,
+        "right_wing": 7545,
+        "either_wing_home3": 18746,
+        "opposite_rook_wing_home3": 0
+      },
+      "30:0:other": {
+        "n": 29194,
+        "left_wing": 1994,
+        "right_wing": 843,
+        "either_wing_home3": 2831,
+        "opposite_rook_wing_home3": 0
+      },
+      "40:0:furibisha": {
+        "n": 34576,
+        "left_wing": 3455,
+        "right_wing": 10521,
+        "either_wing_home3": 13937,
+        "opposite_rook_wing_home3": 10500
+      },
+      "40:1:ibisha": {
+        "n": 77845,
+        "left_wing": 17228,
+        "right_wing": 2048,
+        "either_wing_home3": 19205,
+        "opposite_rook_wing_home3": 17187
+      },
+      "60:0:furibisha": {
+        "n": 30136,
+        "left_wing": 5430,
+        "right_wing": 9507,
+        "either_wing_home3": 14802,
+        "opposite_rook_wing_home3": 9434
+      },
+      "60:1:furibisha": {
+        "n": 30312,
+        "left_wing": 5496,
+        "right_wing": 9392,
+        "either_wing_home3": 14759,
+        "opposite_rook_wing_home3": 9309
+      },
+      "30:1:furibisha": {
+        "n": 34859,
+        "left_wing": 2085,
+        "right_wing": 8193,
+        "either_wing_home3": 10257,
+        "opposite_rook_wing_home3": 8179
+      },
+      "40:0:other": {
+        "n": 37486,
+        "left_wing": 4235,
+        "right_wing": 2214,
+        "either_wing_home3": 6422,
+        "opposite_rook_wing_home3": 0
+      },
+      "60:0:ibisha": {
+        "n": 57666,
+        "left_wing": 17158,
+        "right_wing": 2806,
+        "either_wing_home3": 19684,
+        "opposite_rook_wing_home3": 16985
+      },
+      "60:1:ibisha": {
+        "n": 57618,
+        "left_wing": 16726,
+        "right_wing": 2898,
+        "either_wing_home3": 19368,
+        "opposite_rook_wing_home3": 16583
+      },
+      "30:0:furibisha": {
+        "n": 35296,
+        "left_wing": 2104,
+        "right_wing": 7997,
+        "either_wing_home3": 10082,
+        "opposite_rook_wing_home3": 7986
+      },
+      "30:1:other": {
+        "n": 29000,
+        "left_wing": 1868,
+        "right_wing": 925,
+        "either_wing_home3": 2788,
+        "opposite_rook_wing_home3": 0
+      },
+      "40:1:furibisha": {
+        "n": 34434,
+        "left_wing": 3467,
+        "right_wing": 10344,
+        "either_wing_home3": 13785,
+        "opposite_rook_wing_home3": 10324
+      }
+    },
+    "checks": {
+      "raw_rows": 16694625,
+      "raw_mate_rows": 147242,
+      "node_ge_cap_rows": 126,
+      "depth_below9_nonmate_rows": 402,
+      "raw_score_sign_errors": 0,
+      "nonmate_eval_terminal": 0,
+      "bad_maxply": 0,
+      "game_content_hash_mismatch": 0,
+      "sample_games": 2048,
+      "sample_rows": 229016,
+      "sample_qs_rows": 141481,
+      "qs_source_hash_mismatch": 0,
+      "kept_changed": 0,
+      "kept_flip": 0,
+      "leaf_differs": 0,
+      "qs_eval_mismatch": 0,
+      "qs_result_mismatch": 0,
+      "replayed_roots": 229016,
+      "root_sfen_mismatch": 0,
+      "root_turn_mismatch": 0,
+      "root_wdl_mismatch": 0,
+      "illegal_selected_move": 0,
+      "played_move_mismatch": 0,
+      "final_sfen_mismatch": 0,
+      "replayed_repetition_games": 20,
+      "bad_repetition": 0,
+      "bad_declaration": 0,
+      "unverified_eval_terminal": 1
+    },
+    "qs_sample": {
+      "input_rows": 229016,
+      "changed_rows": 87535,
+      "flipped_rows": 59772,
+      "in_check": 0
+    },
+    "bias": {
+      "ply_upper": {
+        "32": [
+          6178,
+          26590
+        ],
+        "64": [
+          21025,
+          44079
+        ],
+        "96": [
+          25490,
+          33727
+        ],
+        "128": [
+          19417,
+          21020
+        ],
+        "192": [
+          12737,
+          12284
+        ],
+        "inf": [
+          2688,
+          3781
+        ]
+      },
+      "abs_score_upper": {
+        "1200": [
+          15245,
+          20429
+        ],
+        "600": [
+          12642,
+          19876
+        ],
+        "300": [
+          13903,
+          30992
+        ],
+        "100": [
+          9613,
+          26098
+        ],
+        "2000": [
+          23502,
+          29956
+        ],
+        "4000": [
+          11037,
+          12983
+        ],
+        "inf": [
+          1153,
+          850
+        ],
+        "32000": [
+          440,
+          297
+        ]
+      },
+      "board_nonking_upper": {
+        "inf": [
+          34687,
+          80407
+        ],
+        "32": [
+          49986,
+          57641
+        ],
+        "24": [
+          2862,
+          3433
+        ]
+      },
+      "hand_upper": {
+        "4": [
+          13434,
+          45469
+        ],
+        "8": [
+          30325,
+          46653
+        ],
+        "12": [
+          31081,
+          35689
+        ],
+        "inf": [
+          12695,
+          13670
+        ]
+      },
+      "promotion_upper": {
+        "3": [
+          40437,
+          51744
+        ],
+        "5": [
+          21346,
+          21156
+        ],
+        "1": [
+          20908,
+          62739
+        ],
+        "inf": [
+          4844,
+          5842
+        ]
+      },
+      "result": {
+        "1": [
+          44044,
+          65853
+        ],
+        "-1": [
+          40074,
+          69628
+        ],
+        "0": [
+          3417,
+          6000
+        ]
+      },
+      "distance_to_end_upper": {
+        "inf": [
+          29742,
+          70350
+        ],
+        "64": [
+          25455,
+          38034
+        ],
+        "32": [
+          15261,
+          17451
+        ],
+        "16": [
+          8165,
+          8219
+        ],
+        "8": [
+          7759,
+          6577
+        ],
+        "1": [
+          1153,
+          850
+        ]
+      }
+    },
+    "examples": [
+      {
+        "game_id": 17,
+        "winner": 0,
+        "reason": "eval_limit",
+        "ply": 60,
+        "sfen": "lnsg1k2l/5g1s1/p1pp1p1pp/1+r2p1PP1/9/2+bS1G3/P2P1SN1P/1B2R3L/LN2KG3 b NP5p 61",
+        "score": 157,
+        "result": 1,
+        "kept": true
+      },
+      {
+        "game_id": 118,
+        "winner": 0,
+        "reason": "eval_limit",
+        "ply": 60,
+        "sfen": "7nl/r2gk2+P1/2ns1p2p/3ppsp2/1p3N2b/2P2PP2/SP1PPSgLP/2G2R3/1N2K3L b BG4Pl 61",
+        "score": -842,
+        "result": 1,
+        "kept": true
+      },
+      {
+        "game_id": 121,
+        "winner": 1,
+        "reason": "eval_limit",
+        "ply": 60,
+        "sfen": "2s+R1g1nl/5ks2/ppR2p1pp/2p3p2/2b6/1Pg2P3/P1N1G1PPP/L8/2S1K1SNL b NL2Pbg3p 61",
+        "score": -440,
+        "result": -1,
+        "kept": true
+      },
+      {
+        "game_id": 176,
+        "winner": 1,
+        "reason": "eval_limit",
+        "ply": 60,
+        "sfen": "l2gk1gn+B/2s2s3/pp2pp1p1/1np3p2/5G2p/2P2PP2/PPS1PBNPP/2+r2GK2/+r4NS1L b Ll2p 61",
+        "score": -609,
+        "result": -1,
+        "kept": true
+      },
+      {
+        "game_id": 334,
+        "winner": 0,
+        "reason": "eval_limit",
+        "ply": 60,
+        "sfen": "ln3k3/3rg1g1l/1pp1b2p1/p4ps1p/2s4N1/3pPP3/PPP2S2P/1BSGG2+R1/LNK5L b N4Pp 61",
+        "score": 1837,
+        "result": 1,
+        "kept": true
+      },
+      {
+        "game_id": 342,
+        "winner": 1,
+        "reason": "eval_limit",
+        "ply": 60,
+        "sfen": "lns2gp+Rl/3k1s3/1ppp1p1p1/p4g2p/1P1PP4/P1P6/2N1GPSPP/2+b2K2L/L4G1N1 b BSNr2p 61",
+        "score": 63,
+        "result": -1,
+        "kept": true
+      }
+    ],
+    "generation_summary": {
+      "new_games": 150000,
+      "reused_games": 0,
+      "new_rows": 16694625,
+      "seconds": 9651.820640778,
+      "outcomes": {
+        "eval_limit": 147243,
+        "repetition_draw": 1453,
+        "max_ply_draw": 1303,
+        "declaration_27_win": 1
+      }
+    },
+    "qs_summary": {
+      "new_games": 150000,
+      "input_rows": 16694625,
+      "kept_rows": 10300841,
+      "changed_rows": 6393784,
+      "flipped_rows": 4357363,
+      "in_check": 0,
+      "seconds": 1024.9503476600003
+    },
+    "cache_counts": {
+      "input_rows": 10300841,
+      "train": 10282217,
+      "dedup_or_val_overlap": 18624,
+      "val": 50000
+    },
+    "seconds": 147.0813136680008,
+    "peak_rss_kib": 221472
+  },
+  "cache": {
+    "mode": "cache",
+    "checks": {
+      "val_exact_overlap": 0,
+      "val_mirror_overlap": 0,
+      "aligned_rows": 141219,
+      "cache_feature_mismatch": 0,
+      "cache_eval_mismatch": 0,
+      "cache_wdl_mismatch": 0,
+      "compact_train_sample_rows": 10000,
+      "compact_train_mismatch_values": 0,
+      "compact_val_sample_rows": 10000,
+      "compact_val_mismatch_values": 0,
+      "hash_equal_pairs": 0,
+      "train_duplicate_pairs": 0
+    },
+    "sampled_removals": {
+      "total": 262,
+      "val_exact": 0,
+      "val_mirror": 0,
+      "nonval_unique_keys": 190,
+      "found_in_earlier_train": 190,
+      "unexplained_unique_keys": 0
+    },
+    "rows": 10282217,
+    "result_counts": {
+      "-1": 5131072,
+      "1": 4842033,
+      "0": 309112
+    },
+    "source_sha256": "97d01af64e8c260e7ebc33b997b5683bd2f4baa561a9cff720c566175a6d357b",
+    "compact_manifest": {
+      "format": "shared-halfkp-compact-v1",
+      "source": "~/binbo-shogi-data/work/task154/cache",
+      "splits": {
+        "train": {
+          "rows": 10282217,
+          "escapes": 0,
+          "mismatches": 0,
+          "source_sha256": "97d01af64e8c260e7ebc33b997b5683bd2f4baa561a9cff720c566175a6d357b",
+          "decoded_sha256": "97d01af64e8c260e7ebc33b997b5683bd2f4baa561a9cff720c566175a6d357b",
+          "source_stamp": {
+            "path": "~/binbo-shogi-data/work/task154/cache/train_indices.npy",
+            "size": 3166922964,
+            "mtime_ns": 1792557456140939926,
+            "head_sha256": "29b606906e85a2fcbb57948adf3cd5f68b8bdbb85a3b89220e5ededb5d55d76f",
+            "tail_sha256": "fe9786e9bfed9204e260dcc4e311275ec4c6e5af8dc9649280a59b83599524c0"
+          }
+        },
+        "val": {
+          "rows": 50000,
+          "escapes": 0,
+          "mismatches": 0,
+          "source_sha256": "544c28fc1e7cd9cc950a21113d03cd940ec14e25cd2e8416d273dc622cbd189d",
+          "decoded_sha256": "544c28fc1e7cd9cc950a21113d03cd940ec14e25cd2e8416d273dc622cbd189d",
+          "source_stamp": {
+            "path": "~/binbo-shogi-data/caches/shared_64m/val_indices.npy",
+            "size": 15400128,
+            "mtime_ns": 1791093954140358561,
+            "head_sha256": "0e386cb30baee5d101923c0fe1c76bd826acbbce3a5e0fae08f239a1a6e76407",
+            "tail_sha256": "0e386cb30baee5d101923c0fe1c76bd826acbbce3a5e0fae08f239a1a6e76407"
+          }
+        }
+      },
+      "seconds": 36.564792600000146
+    },
+    "mate_rows": 61654,
+    "clamped_rows": 1036591,
+    "val_links": {
+      "val_wdl.npy": "~/binbo-shogi-data/caches/shared_64m/val_wdl.npy",
+      "val_indices.npy": "~/binbo-shogi-data/caches/shared_64m/val_indices.npy",
+      "val_evals.npy": "~/binbo-shogi-data/caches/shared_64m/val_evals.npy",
+      "labels/train_dlshogi_evals.npy": "~/binbo-shogi-data/work/task154/cache/train_evals.npy",
+      "labels/val_dlshogi_evals.npy": "~/binbo-shogi-data/work/task142/labels_public/val_dlshogi_evals.npy"
+    },
+    "val_shards": [
+      95,
+      96,
+      97,
+      98,
+      99
+    ],
+    "seconds": 62.21378612300032,
+    "peak_rss_kib": 4952356
+  },
+  "spot": {
+    "checks": {
+      "qs_roots": 180,
+      "changed": 69,
+      "odd_leaf": 46,
+      "marker_parity_mismatch": 0,
+      "leaf_turn_mismatch": 0,
+      "inherited_result_mismatch": 0,
+      "selected_list_mismatch": 0
+    },
+    "odd_leaf_examples": [
+      {
+        "game_id": 0,
+        "source_row": 8,
+        "winner": 1,
+        "root_turn": 0,
+        "leaf_turn": 1,
+        "root_score": -236,
+        "inherited_leaf_score": 236,
+        "root_result": -1,
+        "inherited_leaf_result": 1,
+        "root_sfen": "l3g1snl/1r1s1kgb1/p1n1pp1p1/2pp2p1p/7P1/1pPP5/PPBSPPPSP/3K3R1/LN1G1G1NL b - 25",
+        "leaf_sfen": "l3g1snl/1r1s1kgb1/p1n1pp1p1/2pp2p1p/7P1/1PPP5/P1BSPPPSP/3K3R1/LN1G1G1NL w P 1",
+        "leaf_plies": 1,
+        "stored": false
+      },
+      {
+        "game_id": 0,
+        "source_row": 12,
+        "winner": 1,
+        "root_turn": 0,
+        "leaf_turn": 1,
+        "root_score": -298,
+        "inherited_leaf_score": 298,
+        "root_result": -1,
+        "inherited_leaf_result": 1,
+        "root_sfen": "l3g1snl/1r1s1kgb1/p1n1pp1p1/2p3p1p/7P1/1PPp5/P1BSPPPSP/2GK3R1/LN3G1NL b Pp 29",
+        "leaf_sfen": "l3g1snl/1r1s1kgb1/p1n1pp1p1/2p3p1p/7P1/1PPS5/P1B1PPPSP/2GK3R1/LN3G1NL w 2Pp 1",
+        "leaf_plies": 1,
+        "stored": false
+      },
+      {
+        "game_id": 0,
+        "source_row": 13,
+        "winner": 1,
+        "root_turn": 1,
+        "leaf_turn": 0,
+        "root_score": 294,
+        "inherited_leaf_score": -294,
+        "root_result": 1,
+        "inherited_leaf_result": -1,
+        "root_sfen": "l3g1snl/1r1s1kgb1/p1n1pp1p1/2p3p1p/7P1/1PPB5/P2SPPPSP/2GK3R1/LN3G1NL w 2Pp 30",
+        "leaf_sfen": "l3g1snl/3s1kg2/p1n1pp1p1/2p3p1p/7P1/1rPS5/P3PPPSP/2GK3R1/LN3G1NL b B2Pb2p 1",
+        "leaf_plies": 3,
+        "stored": false
+      },
+      {
+        "game_id": 0,
+        "source_row": 15,
+        "winner": 1,
+        "root_turn": 1,
+        "leaf_turn": 0,
+        "root_score": 331,
+        "inherited_leaf_score": -331,
+        "root_result": 1,
+        "inherited_leaf_result": -1,
+        "root_sfen": "l3g1snl/1r1s1kg2/p1n1pp1p1/2p3p1p/7P1/1PPS5/P3PPPSP/2GK3R1/LN3G1NL w B2Pbp 32",
+        "leaf_sfen": "l3g1snl/3s1kg2/p1n1pp1p1/2p3p1p/7P1/1rPS5/P3PPPSP/2GK3R1/LN3G1NL b B2Pb2p 1",
+        "leaf_plies": 1,
+        "stored": false
+      }
+    ],
+    "assemblies": {
+      "shared": {
+        "counts": {
+          "input_rows": 729,
+          "train": 729,
+          "val": 50000
+        },
+        "val_shards": [
+          95,
+          96,
+          97,
+          98,
+          99
+        ],
+        "train_val_overlap": 0,
+        "train_val_mirror_overlap": 0,
+        "train_duplicates": 0
+      },
+      "holdout": {
+        "counts": {
+          "input_rows": 729,
+          "val": 383,
+          "train": 346
+        },
+        "val_shards": [],
+        "train_val_overlap": 0,
+        "train_val_mirror_overlap": 0,
+        "train_duplicates": 0,
+        "game_overlap": [],
+        "train_games": [
+          2,
+          4,
+          5,
+          6
+        ],
+        "val_games": [
+          0,
+          1,
+          3,
+          7
+        ]
+      }
+    },
+    "early_unrecorded_terminal": [
+      {
+        "game_id": 148631,
+        "ply": 15,
+        "winner": 1,
+        "move": "B*6d",
+        "search": {
+          "score": 32000,
+          "raw": "5",
+          "mate": true,
+          "depth": 9,
+          "nodes": 2977
+        },
+        "winner_agrees": true
+      }
+    ],
+    "repetition_replay": {
+      "games": 1453,
+      "perpetual_check_games": 0
+    },
+    "perpetual_check_game_ids": []
+  },
+  "bias": {
+    "ply_upper": {
+      "32": {
+        "dropped": 6178,
+        "kept": 26590,
+        "keep_fraction": 0.81146240234375,
+        "share_of_dropped": 0.07057748329239732,
+        "share_of_kept": 0.18794043016376757
+      },
+      "64": {
+        "dropped": 21025,
+        "kept": 44079,
+        "keep_fraction": 0.6770551732612435,
+        "share_of_dropped": 0.24018963843034216,
+        "share_of_kept": 0.31155420162424635
+      },
+      "96": {
+        "dropped": 25490,
+        "kept": 33727,
+        "keep_fraction": 0.5695492848337471,
+        "share_of_dropped": 0.29119780659164907,
+        "share_of_kept": 0.23838536623292172
+      },
+      "128": {
+        "dropped": 19417,
+        "kept": 21020,
+        "keep_fraction": 0.519820956055098,
+        "share_of_dropped": 0.22181984349117495,
+        "share_of_kept": 0.14857118623702123
+      },
+      "192": {
+        "dropped": 12737,
+        "kept": 12284,
+        "keep_fraction": 0.4909476040126294,
+        "share_of_dropped": 0.14550751128120182,
+        "share_of_kept": 0.08682437924526969
+      },
+      "inf": {
+        "dropped": 2688,
+        "kept": 3781,
+        "keep_fraction": 0.5844798268665945,
+        "share_of_dropped": 0.030707716913234706,
+        "share_of_kept": 0.026724436496773418
+      }
+    },
+    "abs_score_upper": {
+      "1200": {
+        "dropped": 15245,
+        "kept": 20429,
+        "keep_fraction": 0.5726579581768234,
+        "share_of_dropped": 0.17415890786542526,
+        "share_of_kept": 0.14439394689039517
+      },
+      "600": {
+        "dropped": 12642,
+        "kept": 19876,
+        "keep_fraction": 0.6112307029952642,
+        "share_of_dropped": 0.14442223110755698,
+        "share_of_kept": 0.14048529484524425
+      },
+      "300": {
+        "dropped": 13903,
+        "kept": 30992,
+        "keep_fraction": 0.6903218621227308,
+        "share_of_dropped": 0.1588278974124636,
+        "share_of_kept": 0.21905414861359476
+      },
+      "100": {
+        "dropped": 9613,
+        "kept": 26098,
+        "keep_fraction": 0.7308112346335863,
+        "share_of_dropped": 0.10981892957102873,
+        "share_of_kept": 0.184462931418353
+      },
+      "2000": {
+        "dropped": 23502,
+        "kept": 29956,
+        "keep_fraction": 0.560365146470126,
+        "share_of_dropped": 0.26848689095790257,
+        "share_of_kept": 0.21173161060495754
+      },
+      "4000": {
+        "dropped": 11037,
+        "kept": 12983,
+        "keep_fraction": 0.5405079100749376,
+        "share_of_dropped": 0.1260867081738733,
+        "share_of_kept": 0.09176497197503551
+      },
+      "inf": {
+        "dropped": 1153,
+        "kept": 850,
+        "keep_fraction": 0.4243634548177733,
+        "share_of_dropped": 0.013171874107499858,
+        "share_of_kept": 0.00600787384878535
+      },
+      "32000": {
+        "dropped": 440,
+        "kept": 297,
+        "keep_fraction": 0.40298507462686567,
+        "share_of_dropped": 0.005026560804249729,
+        "share_of_kept": 0.0020992218036344104
+      }
+    },
+    "board_nonking_upper": {
+      "inf": {
+        "dropped": 34687,
+        "kept": 80407,
+        "keep_fraction": 0.6986202582237128,
+        "share_of_dropped": 0.3962643514022962,
+        "share_of_kept": 0.5683236618344513
+      },
+      "32": {
+        "dropped": 49986,
+        "kept": 57641,
+        "keep_fraction": 0.5355626376281045,
+        "share_of_dropped": 0.5710401553664248,
+        "share_of_kept": 0.40741159590333687
+      },
+      "24": {
+        "dropped": 2862,
+        "kept": 3433,
+        "keep_fraction": 0.5453534551231136,
+        "share_of_dropped": 0.03269549323127892,
+        "share_of_kept": 0.024264742262211886
+      }
+    },
+    "hand_upper": {
+      "4": {
+        "dropped": 13434,
+        "kept": 45469,
+        "keep_fraction": 0.7719301224046313,
+        "share_of_dropped": 0.1534700405552065,
+        "share_of_kept": 0.32137884238873066
+      },
+      "8": {
+        "dropped": 30325,
+        "kept": 46653,
+        "keep_fraction": 0.6060562758190652,
+        "share_of_dropped": 0.3464328554292569,
+        "share_of_kept": 0.3297474572557446
+      },
+      "12": {
+        "dropped": 31081,
+        "kept": 35689,
+        "keep_fraction": 0.534506514901902,
+        "share_of_dropped": 0.3550694008111041,
+        "share_of_kept": 0.2522529526932945
+      },
+      "inf": {
+        "dropped": 12695,
+        "kept": 13670,
+        "keep_fraction": 0.5184904229091599,
+        "share_of_dropped": 0.1450277032044325,
+        "share_of_kept": 0.09662074766223026
+      }
+    },
+    "promotion_upper": {
+      "3": {
+        "dropped": 40437,
+        "kept": 51744,
+        "keep_fraction": 0.5613304260096983,
+        "share_of_dropped": 0.46195236191237793,
+        "share_of_kept": 0.3657310875665284
+      },
+      "5": {
+        "dropped": 21346,
+        "kept": 21156,
+        "keep_fraction": 0.4977648110677145,
+        "share_of_dropped": 0.24385674301707888,
+        "share_of_kept": 0.1495324460528269
+      },
+      "1": {
+        "dropped": 20908,
+        "kept": 62739,
+        "keep_fraction": 0.7500448312551556,
+        "share_of_dropped": 0.23885303021648482,
+        "share_of_kept": 0.4434447028222871
+      },
+      "inf": {
+        "dropped": 4844,
+        "kept": 5842,
+        "keep_fraction": 0.5466966123900431,
+        "share_of_dropped": 0.05533786485405838,
+        "share_of_kept": 0.04129176355835766
+      }
+    },
+    "result": {
+      "1": {
+        "dropped": 44044,
+        "kept": 65853,
+        "keep_fraction": 0.5992247286095161,
+        "share_of_dropped": 0.5031587365053979,
+        "share_of_kept": 0.46545472536948423
+      },
+      "-1": {
+        "dropped": 40074,
+        "kept": 69628,
+        "keep_fraction": 0.6347012816539352,
+        "share_of_dropped": 0.4578054492488719,
+        "share_of_kept": 0.4921367533449721
+      },
+      "0": {
+        "dropped": 3417,
+        "kept": 6000,
+        "keep_fraction": 0.6371455877668047,
+        "share_of_dropped": 0.03903581424573028,
+        "share_of_kept": 0.04240852128554364
+      }
+    },
+    "distance_to_end_upper": {
+      "inf": {
+        "dropped": 29742,
+        "kept": 70350,
+        "keep_fraction": 0.7028533748950965,
+        "share_of_dropped": 0.33977266236362597,
+        "share_of_kept": 0.4972399120729992
+      },
+      "64": {
+        "dropped": 25455,
+        "kept": 38034,
+        "keep_fraction": 0.5990644048575344,
+        "share_of_dropped": 0.29079796652767465,
+        "share_of_kept": 0.26882761642906117
+      },
+      "32": {
+        "dropped": 15261,
+        "kept": 17451,
+        "keep_fraction": 0.5334739545121057,
+        "share_of_dropped": 0.1743416918946707,
+        "share_of_kept": 0.12334518415900368
+      },
+      "16": {
+        "dropped": 8165,
+        "kept": 8219,
+        "keep_fraction": 0.50164794921875,
+        "share_of_dropped": 0.09327697492431598,
+        "share_of_kept": 0.058092606074313866
+      },
+      "8": {
+        "dropped": 7759,
+        "kept": 6577,
+        "keep_fraction": 0.45877511160714285,
+        "share_of_dropped": 0.08863883018221283,
+        "share_of_kept": 0.04648680741583676
+      },
+      "1": {
+        "dropped": 1153,
+        "kept": 850,
+        "keep_fraction": 0.4243634548177733,
+        "share_of_dropped": 0.013171874107499858,
+        "share_of_kept": 0.00600787384878535
+      }
+    }
+  },
+  "king_summary": {
+    "30": {
+      "0": {
+        "n": 149921,
+        "file_counts": {
+          "1": 390,
+          "2": 2730,
+          "3": 7583,
+          "4": 20700,
+          "5": 64801,
+          "6": 37548,
+          "7": 15401,
+          "8": 743,
+          "9": 25
+        },
+        "rank_counts": {
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 2,
+          "6": 93,
+          "7": 4402,
+          "8": 75945,
+          "9": 69479
+        },
+        "central_two_files_fraction": 0.682686214739763,
+        "either_wing_home3_fraction": 0.17888087726202467,
+        "ibisha_opposite_rook_castle_fraction": 0.14108461799580949,
+        "structures": {
+          "ibisha": {
+            "n": 85431,
+            "left_wing": 12071,
+            "right_wing": 1863,
+            "either_wing_home3": 13905,
+            "opposite_rook_wing_home3": 12053
+          },
+          "other": {
+            "n": 29194,
+            "left_wing": 1994,
+            "right_wing": 843,
+            "either_wing_home3": 2831,
+            "opposite_rook_wing_home3": 0
+          },
+          "furibisha": {
+            "n": 35296,
+            "left_wing": 2104,
+            "right_wing": 7997,
+            "either_wing_home3": 10082,
+            "opposite_rook_wing_home3": 7986
+          }
+        }
+      },
+      "1": {
+        "n": 149921,
+        "file_counts": {
+          "1": 27,
+          "2": 738,
+          "3": 15569,
+          "4": 37161,
+          "5": 65727,
+          "6": 19775,
+          "7": 7732,
+          "8": 2772,
+          "9": 420
+        },
+        "rank_counts": {
+          "1": 71038,
+          "2": 74626,
+          "3": 4148,
+          "4": 106,
+          "5": 2,
+          "6": 1,
+          "7": 0,
+          "8": 0,
+          "9": 0
+        },
+        "central_two_files_fraction": 0.6862814415592212,
+        "either_wing_home3_fraction": 0.18136218408361737,
+        "ibisha_opposite_rook_castle_fraction": 0.14358253352234435,
+        "structures": {
+          "ibisha": {
+            "n": 86062,
+            "left_wing": 12381,
+            "right_wing": 1806,
+            "either_wing_home3": 14145,
+            "opposite_rook_wing_home3": 12357
+          },
+          "furibisha": {
+            "n": 34859,
+            "left_wing": 2085,
+            "right_wing": 8193,
+            "either_wing_home3": 10257,
+            "opposite_rook_wing_home3": 8179
+          },
+          "other": {
+            "n": 29000,
+            "left_wing": 1868,
+            "right_wing": 925,
+            "either_wing_home3": 2788,
+            "opposite_rook_wing_home3": 0
+          }
+        }
+      }
+    },
+    "40": {
+      "0": {
+        "n": 149642,
+        "file_counts": {
+          "1": 853,
+          "2": 4975,
+          "3": 8863,
+          "4": 19483,
+          "5": 54155,
+          "6": 36448,
+          "7": 22351,
+          "8": 2342,
+          "9": 172
+        },
+        "rank_counts": {
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 2,
+          "5": 14,
+          "6": 244,
+          "7": 5449,
+          "8": 81751,
+          "9": 62182
+        },
+        "central_two_files_fraction": 0.6054650432365245,
+        "either_wing_home3_fraction": 0.2633618903783697,
+        "ibisha_opposite_rook_castle_fraction": 0.22080433101314773,
+        "structures": {
+          "ibisha": {
+            "n": 77580,
+            "left_wing": 17175,
+            "right_wing": 1956,
+            "either_wing_home3": 19051,
+            "opposite_rook_wing_home3": 17130
+          },
+          "furibisha": {
+            "n": 34576,
+            "left_wing": 3455,
+            "right_wing": 10521,
+            "either_wing_home3": 13937,
+            "opposite_rook_wing_home3": 10500
+          },
+          "other": {
+            "n": 37486,
+            "left_wing": 4235,
+            "right_wing": 2214,
+            "either_wing_home3": 6422,
+            "opposite_rook_wing_home3": 0
+          }
+        }
+      },
+      "1": {
+        "n": 149642,
+        "file_counts": {
+          "1": 168,
+          "2": 2431,
+          "3": 22137,
+          "4": 36422,
+          "5": 55027,
+          "6": 18787,
+          "7": 8915,
+          "8": 4912,
+          "9": 843
+        },
+        "rank_counts": {
+          "1": 63985,
+          "2": 80218,
+          "3": 5184,
+          "4": 240,
+          "5": 14,
+          "6": 1,
+          "7": 0,
+          "8": 0,
+          "9": 0
+        },
+        "central_two_files_fraction": 0.6111185362398257,
+        "either_wing_home3_fraction": 0.2624664198553882,
+        "ibisha_opposite_rook_castle_fraction": 0.22078489305671528,
+        "structures": {
+          "other": {
+            "n": 37363,
+            "left_wing": 4041,
+            "right_wing": 2278,
+            "either_wing_home3": 6286,
+            "opposite_rook_wing_home3": 0
+          },
+          "ibisha": {
+            "n": 77845,
+            "left_wing": 17228,
+            "right_wing": 2048,
+            "either_wing_home3": 19205,
+            "opposite_rook_wing_home3": 17187
+          },
+          "furibisha": {
+            "n": 34434,
+            "left_wing": 3467,
+            "right_wing": 10344,
+            "either_wing_home3": 13785,
+            "opposite_rook_wing_home3": 10324
+          }
+        }
+      }
+    },
+    "60": {
+      "0": {
+        "n": 147455,
+        "file_counts": {
+          "1": 1441,
+          "2": 7536,
+          "3": 10989,
+          "4": 19584,
+          "5": 41215,
+          "6": 32583,
+          "7": 26934,
+          "8": 6378,
+          "9": 795
+        },
+        "rank_counts": {
+          "1": 1,
+          "2": 1,
+          "3": 6,
+          "4": 38,
+          "5": 150,
+          "6": 1298,
+          "7": 9243,
+          "8": 83338,
+          "9": 53380
+        },
+        "central_two_files_fraction": 0.5004781119663626,
+        "either_wing_home3_fraction": 0.3613237936997728,
+        "ibisha_opposite_rook_castle_fraction": 0.2945409773523393,
+        "structures": {
+          "other": {
+            "n": 59653,
+            "left_wing": 11519,
+            "right_wing": 7653,
+            "either_wing_home3": 18793,
+            "opposite_rook_wing_home3": 0
+          },
+          "furibisha": {
+            "n": 30136,
+            "left_wing": 5430,
+            "right_wing": 9507,
+            "either_wing_home3": 14802,
+            "opposite_rook_wing_home3": 9434
+          },
+          "ibisha": {
+            "n": 57666,
+            "left_wing": 17158,
+            "right_wing": 2806,
+            "either_wing_home3": 19684,
+            "opposite_rook_wing_home3": 16985
+          }
+        }
+      },
+      "1": {
+        "n": 147455,
+        "file_counts": {
+          "1": 760,
+          "2": 6277,
+          "3": 26750,
+          "4": 32815,
+          "5": 41409,
+          "6": 19609,
+          "7": 11089,
+          "8": 7332,
+          "9": 1414
+        },
+        "rank_counts": {
+          "1": 54962,
+          "2": 81764,
+          "3": 9272,
+          "4": 1255,
+          "5": 167,
+          "6": 30,
+          "7": 5,
+          "8": 0,
+          "9": 0
+        },
+        "central_two_files_fraction": 0.5033671289545963,
+        "either_wing_home3_fraction": 0.3585704113119257,
+        "ibisha_opposite_rook_castle_fraction": 0.2878093651289528,
+        "structures": {
+          "other": {
+            "n": 59525,
+            "left_wing": 11565,
+            "right_wing": 7545,
+            "either_wing_home3": 18746,
+            "opposite_rook_wing_home3": 0
+          },
+          "furibisha": {
+            "n": 30312,
+            "left_wing": 5496,
+            "right_wing": 9392,
+            "either_wing_home3": 14759,
+            "opposite_rook_wing_home3": 9309
+          },
+          "ibisha": {
+            "n": 57618,
+            "left_wing": 16726,
+            "right_wing": 2898,
+            "either_wing_home3": 19368,
+            "opposite_rook_wing_home3": 16583
+          }
+        }
+      }
+    }
+  },
+  "train_rows_by_termination": {
+    "eval_limit": 9972940,
+    "max_ply_draw": 242700,
+    "repetition_draw": 66412,
+    "declaration_27_win": 165
+  },
+  "log_audit": {
+    "task154_gen.log": {
+      "run_starts": 2,
+      "successful_run_retry_lines": 0,
+      "successful_run_traceback_lines": 0
+    },
+    "task154_qs.log": {
+      "run_starts": 0,
+      "successful_run_retry_lines": 0,
+      "successful_run_traceback_lines": 0
+    }
+  },
+  "findings": [
+    {
+      "severity": "must-fix before round 2",
+      "topic": "round2_configuration",
+      "finding": "ADOPTED は gen/qs の eval 引数に渡らない。既定は task142。TAG 固定では既存 cache/model も再利用する。",
+      "action": "新 run ID と出力先を使う。gen/qs に --eval-dir を明示する。生成/QS/初期重みの SHA を照合する。"
+    },
+    {
+      "severity": "should-fix",
+      "topic": "qs_selection_bias",
+      "finding": "終盤・大差・終局直前・勝者手番の保持率が低い。",
+      "action": "同じ層別の保持率を保存する。静止行の層別抽出/重みづけを小さく比較する。changed inherit の単純利用は避ける。"
+    },
+    {
+      "severity": "should-fix",
+      "topic": "terminal_and_stop_provenance",
+      "finding": "15 ply 終局の原 score が欠測。node cap 到達の専用記録もない。",
+      "action": "学習行と独立した terminal_search、stop_reason、最終 nodes/depth、retry を保存する。"
+    },
+    {
+      "severity": "note",
+      "topic": "labels",
+      "finding": "標本の根→QS→cache の評価値・勝敗・手番の不一致は 0。"
+    },
+    {
+      "severity": "note",
+      "topic": "draw_targets",
+      "finding": "cp-result-lambda は既知の draw も混ぜない。cp 分岐では wdl-known-only の有無で変わらない。"
+    },
+    {
+      "severity": "note",
+      "topic": "king_placement",
+      "finding": "中央寄りの玉は自己対局にも多い。囲いの有無だけで善悪や学習の因果は判定できない。"
+    }
+  ],
+  "source_sha256": {
+    "AGENTS.md": "082a0006c19e34e1d7ee283570763fbb2f4fa92451efcec264a31984b7fad362",
+    "STATUS.md": "c0baa1dcf8a55534cbf8084c27c2e95038c4aacf54e784463d9287218433c863",
+    "DESIGN.md": "5d3ededb642c57c4413515752c9637451792b52f1b774977c408605c061be48c",
+    "reports/task154_selfplay_wring.md": "74c367b0179e2aa3dd78d3e18779d8a00da8e28ff0b2276d19e23e19f96ffe13",
+    "reports/task153_selfplay_gen.md": "f472c84f056ed704f45cf07868d4c433924fd6c9d0706d3fd178a1ce5bb6d6ff",
+    "experiments/alphazero/t153_selfplay_gen.py": "41cbc87d949ab8c79e00f7fb2a05c2b31606b6447caafa5961e8a35763df7ec2",
+    "experiments/alphazero/t154_selfplay_wring.py": "b1053949a4476aebb4e99213b1727051edba3d92c13658c722988a989cad5b6c",
+    "trainer/train_nnue.py": "6a6e2cafb2b6b8216aba544bd2c806c5d252f87e0994ebc22b63e009c5e16b89",
+    "trainer/compact_cache.py": "5694f6ed860c1a56a8a204d04eda4c5d061e95a6fefde22e55793ae89e194ee4"
+  },
+  "limitations": [
+    "全量 QS NPZ の再実行・全量ハッシュ検証はしていない。",
+    "共有 val には game ID がない。同一棋譜の混在を ID で証明できない。",
+    "node cap は最後の exact PV の nodes しか残らない。到達件数の厳密値は不明。",
+    "玉の位置と強さの因果、wringing 後の変化は測っていない。"
+  ]
+}

@@ -1,0 +1,254 @@
+#!/usr/bin/env python3
+"""Task 156: combine audit evidence and write the Japanese report and JSON."""
+from collections import Counter
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+
+
+def read(path):
+    return json.loads(path.read_text())
+
+
+def main():
+    p = argparse.ArgumentParser(description=__doc__)
+    data = Path(os.environ.get('DATA_ROOT', Path.home()/'binbo-shogi-data'))
+    p.add_argument('--audit', type=Path, default=data/'work/task156_audit')
+    p.add_argument('--work', type=Path, default=data/'work/task154')
+    p.add_argument('--reports', type=Path, default=Path(__file__).resolve().parents[2]/'reports')
+    args = p.parse_args()
+    r, c, s = read(args.audit/'raw.json'), read(args.audit/'cache.json'), read(args.audit/'spot/spot.json')
+    # Normalize the initial diagnostic name: the one missing terminal row is not a proven invalid result.
+    if 'bad_eval_terminal' in r['checks']:
+        r['checks']['unverified_eval_terminal'] = r['checks'].pop('bad_eval_terminal')
+    c['checks'].setdefault('hash_equal_pairs', 0)
+    c['checks'].setdefault('train_duplicate_pairs', 0)
+    meta = read(args.work/'cache/meta.json')
+    train_by_reason = Counter()
+    for source in meta['sources']:
+        train_by_reason[source['reason']] += source['kept']
+    assert sum(train_by_reason.values()) == c['rows']
+    assert train_by_reason['max_ply_draw']+train_by_reason['repetition_draw'] == c['result_counts']['0']
+    assert c['source_sha256'] == c['compact_manifest']['splits']['train']['source_sha256']
+    assert s['checks']['qs_roots'] == 180
+    assert r['checks']['unverified_eval_terminal'] == len(s['early_unrecorded_terminal']) == 1
+    assert s['early_unrecorded_terminal'][0]['search']['mate'] and s['early_unrecorded_terminal'][0]['winner_agrees']
+    bias = {}
+    for dimension, table in r['bias'].items():
+        drop_total, kept_total = (sum(v[i] for v in table.values()) for i in (0, 1))
+        bias[dimension] = {key: dict(dropped=v[0], kept=v[1], keep_fraction=v[1]/sum(v),
+                                         share_of_dropped=v[0]/drop_total, share_of_kept=v[1]/kept_total)
+                           for key, v in table.items()}
+    king_summary = {}
+    for ply, sides in r['kings'].items():
+        king_summary[ply] = {}
+        for side, counts in sides.items():
+            n = sum(counts.values())
+            files = {str(i): sum(v for k, v in counts.items() if k.split(',')[0] == str(i)) for i in range(1, 10)}
+            ranks = {str(i): sum(v for k, v in counts.items() if k.split(',')[1] == str(i)) for i in range(1, 10)}
+            central = ('5', '6') if side == '0' else ('4', '5')
+            structures = {k.split(':')[2]: v for k, v in r['structures'].items() if k.startswith(ply+':'+side+':')}
+            ib = structures['ibisha']
+            king_summary[ply][side] = dict(n=n, file_counts=files, rank_counts=ranks,
+                central_two_files_fraction=sum(files[f] for f in central)/n,
+                either_wing_home3_fraction=sum(v['either_wing_home3'] for v in structures.values())/n,
+                ibisha_opposite_rook_castle_fraction=ib['opposite_rook_wing_home3']/ib['n'], structures=structures)
+    repo = Path(__file__).resolve().parents[2]
+    source_paths = ['AGENTS.md', 'STATUS.md', 'DESIGN.md', 'reports/task154_selfplay_wring.md',
+                    'reports/task153_selfplay_gen.md', 'experiments/alphazero/t153_selfplay_gen.py',
+                    'experiments/alphazero/t154_selfplay_wring.py', 'trainer/train_nnue.py', 'trainer/compact_cache.py']
+    findings = [
+        dict(severity='must-fix before round 2', topic='round2_configuration',
+             finding='ADOPTED は gen/qs の eval 引数に渡らない。既定は task142。TAG 固定では既存 cache/model も再利用する。',
+             action='新 run ID と出力先を使う。gen/qs に --eval-dir を明示する。生成/QS/初期重みの SHA を照合する。'),
+        dict(severity='should-fix', topic='qs_selection_bias', finding='終盤・大差・終局直前・勝者手番の保持率が低い。',
+             action='同じ層別の保持率を保存する。静止行の層別抽出/重みづけを小さく比較する。changed inherit の単純利用は避ける。'),
+        dict(severity='should-fix', topic='terminal_and_stop_provenance', finding='15 ply 終局の原 score が欠測。node cap 到達の専用記録もない。',
+             action='学習行と独立した terminal_search、stop_reason、最終 nodes/depth、retry を保存する。'),
+        dict(severity='note', topic='labels', finding='標本の根→QS→cache の評価値・勝敗・手番の不一致は 0。'),
+        dict(severity='note', topic='draw_targets', finding='cp-result-lambda は既知の draw も混ぜない。cp 分岐では wdl-known-only の有無で変わらない。'),
+        dict(severity='note', topic='king_placement', finding='中央寄りの玉は自己対局にも多い。囲いの有無だけで善悪や学習の因果は判定できない。')]
+    log_audit = {}
+    for name in ('task154_gen.log', 'task154_qs.log'):
+        lines = (args.work.parents[1]/'logs'/name).read_text().splitlines()
+        starts = [i for i, line in enumerate(lines) if line.startswith('T153 gen requested=')]
+        start = starts[-1] if starts else 0
+        log_audit[name] = dict(run_starts=len(starts), successful_run_retry_lines=sum('T153 retry' in line for line in lines[start:]),
+                               successful_run_traceback_lines=sum('Traceback' in line for line in lines[start:]))
+    result = dict(task=156, date='2026-10-21', resource_policy=dict(max_concurrent_compute_processes=2, threads_per_process=1,
+                  gpu=False, peak_bulk_combined_rss_upper_mib=(r['peak_rss_kib']+c['peak_rss_kib'])/1024,
+                  engine_qsearch_roots=180, engine_regular_searches=1),
+                  definitions=dict(ply='already played half-moves, zero-based', score='Yane internal Value, STM',
+                     bias_buckets='upper exclusive; inf is final bucket; distance 0 is terminal searched root',
+                     kings='physical files/ranks 1..9; denominators are games reaching that ply',
+                     castle='wing files 1..3 or 7..9 AND home three ranks; descriptive proxy, no guard-piece requirement',
+                     ibisha='exactly one unpromoted own rook on home four ranks, on files 1..3 black / 7..9 white',
+                     furibisha='same rook condition, files 4..9 black / 1..6 white'),
+                  raw=r, cache=c, spot=s, bias=bias, king_summary=king_summary,
+                  train_rows_by_termination=train_by_reason, log_audit=log_audit, findings=findings,
+                  source_sha256={name: hashlib.sha256((repo/name).read_bytes()).hexdigest() for name in source_paths},
+                  limitations=['全量 QS NPZ の再実行・全量ハッシュ検証はしていない。',
+                    '共有 val には game ID がない。同一棋譜の混在を ID で証明できない。',
+                    'node cap は最後の exact PV の nodes しか残らない。到達件数の厳密値は不明。',
+                    '玉の位置と強さの因果、wringing 後の変化は測っていない。'])
+    args.reports.mkdir(parents=True, exist_ok=True)
+    (args.reports/'task156_selfplay_audit.json').write_text(json.dumps(result, ensure_ascii=False, indent=2)+'\n')
+
+    def pct(n, d):
+        return f'{100*n/d:.2f}'
+
+    king_rows = []
+    for ply, sides in king_summary.items():
+        for side, v in sides.items():
+            label = '先手' if side == '0' else '後手'
+            f = v['file_counts']
+            rank = v['rank_counts']
+            king_rows.append(f"| {ply} | {label} | {v['n']:,} | {v['central_two_files_fraction']*100:.1f}% | "
+                f"{v['either_wing_home3_fraction']*100:.1f}% | {v['ibisha_opposite_rook_castle_fraction']*100:.1f}% |")
+    report = '''# Task 156: 自己対局データと将棋の形の点検
+
+2026-10-21。Task 154 は採用済み。今回のデータを捨てる根拠は見つからなかった。符号と集合の配線は整合した。
+ただし **2 回目は生成・QS の eval と出力先を明示する必要がある**。終盤の行が落ちやすい点も追跡する。
+
+## 調べた範囲
+
+- 指定の規約、STATUS、設計、Task 153/154 の報告、生成・QS・assemble・学習・compact のコードを読んだ。
+- raw JSON 150,000 局を逐次集計した。終局、手数、到達局面、玉を全局で調べた。
+- seed 20271560 で 2,048 局を無作為抽出した。229,016 根局面を合法手から再生した。QS 141,481 行、cache 141,219 行を対応づけた。
+- train 10,282,217 行を全件照合した。val 50,000 行とその左右反転を全件使った。compact は train/val 各 10,000 行を復号した。
+- 実エンジンは Threads 1。2 局の 180 根局面だけ QS を再実行した。早期終局を 1 回探索した。反復引き分け 1,453 局も全て再生した。
+- 最大 2 計算プロセス。各 1 スレッド。GPU 不使用。並行した集計の RSS 上限合計は約 5.0 GiB 未満。既存ファイルは変更しない。commit/push なし。
+
+## A. データ
+
+### 結果と評価値の向き — note
+
+勝敗は最終 winner と保存局面の手番から計算する。標本で根の手番・勝敗、QS の手番・勝敗・評価値、cache の特徴・評価値・勝敗の不一致は全て 0 件だった。選択手の非合法、棋譜との不一致も 0 件だった。標本の raw 内容 SHA と QS の source SHA も一致した。
+
+QS は評価値を再ラベルしない。根の探索値を使う。葉が奇数手先なら評価値と勝敗を両方反転する。実機 180 行中、変更 69 行、奇数手先 46 行だった。手番と marker の反転は全件一致した。既存 QS と採用行リストも一致した。
+
+例は game 0 の ply 24。後手勝ち。根は先手番、値 −236、勝敗 −1。1 手先の葉は後手番なので +236、+1 になる。この行は保存されない。今回の changed=drop では奇数手先の葉も全て落ちる。標本の保存 QS 141,481 行には、変更局面・flip・根との局面差が 1 行もなかった。
+
+### 終局 — note / 記録の改善は should-fix
+
+| 理由 | 局数 | 全局の割合 | train 行数 |
+|---|---:|---:|---:|
+| eval_limit（保存された探索は全て score mate） | 147,243 | 98.162% | 9,972,940 |
+| 最大 320 ply | 1,303 | 0.869% | 242,700 |
+| 同一局面 4 回 | 1,453 | 0.969% | 66,412 |
+| 27 点宣言 | 1 | 0.0007% | 165 |
+| resign / 合法手なし / その他の終局 | 0 | 0% | 0 |
+
+保存された eval_limit の 147,242 局は全て mate の ±32000。符号から得た勝者も一致した。非 mate の値で打ち切った保存例は 0。宣言の 1 局は cshogi でも成立した。反復 1,453 局は全て 4 回目で終わった。連続王手を draw とした例は 0 局だった。
+
+残る game 148631 は 15 ply で終わる。write-minply=16 より前なので行が空で、元の終局 score が残らない。同じ最終局面と履歴を渡す少数再探索では mate 5、後手勝ちで一致した。元の探索ログそのものの証明ではない。学習行は 0 行なので、この欠測は学習を汚さない。次回は学習行と別に terminal_search を必ず保存する。
+
+引き分けは **局数では 1.84%**。局数では反復 52.72%、最大手数 47.28%だった。一方、train の draw は 309,112 行、3.01%。その **78.52% が最大手数**、21.48% が反復だった。長い局ほど行が多い。局数と行数を区別する。
+
+1,000 万ノード以上の exact PV 記録は 126 行。非 mate で depth 9 未満は 402 行、全記録の 0.0024%だった。cap は終局理由ではない。保存 nodes は最後の bound なし PV 時点なので、実際の cap 到達数は厳密には復元できない。最終 nodes/depth と停止理由を別に残すべきだ。生成ログは古い失敗走を含む。最後の成功走では retry と traceback は 0 件。QS ログにもなかった。
+
+### 重複と val — note
+
+train 全件で val 完全一致 0、val の左右反転との一致 0、train 内の完全重複 0。16 byte ハッシュを並べて候補を探した。等しいハッシュ自体が 0 組なので、同一行の見落としはない。val 照合は 77 列の全バイトで行った。
+
+10,300,841 → 10,282,217 行、18,624 行（0.1808%）の除去は妥当だった。標本では 262 / 141,481 行（0.1852%）を除去していた。val 由来は 0。残る 190 種類のキーは全て同じ局または前の局の cache に存在した。説明不能は 0。全 18,624 行の「重複 / val」の内訳までは再集計していない。
+
+共有 val は技巧2由来で、今回の自己対局の holdout ではない。game ID がないので、同じ棋譜かどうかを ID で証明できない。局面一致と反転一致は除外できている。holdout モードは局 ID の hash で分けるので、同じ局は両側に入らない。8 局の実データで再 assemble し、train 346 / val 383 行、局 ID の交差 0、局面・反転の交差 0 を確認した。
+
+### QS で落ちる行 — should-fix
+
+全量は 16,694,625 → 10,300,841 行。6,393,784 行、38.30% を落とした。記録上は全て changed と一致し、in-check leaf は 0。以下は 2,048 局、229,016 行の標本。kept は assemble 前である。値は表示 cp でなく内部 Value。
+
+| 分け方 | 行数 | 保持率 |
+|---|---:|---:|
+| ply 16–31 / 32–63 / 64–95 | 32,768 / 65,104 / 59,217 | 81.2 / 67.7 / 57.0% |
+| ply 96–127 / 128–191 / 192 以上 | 40,437 / 25,021 / 6,469 | 52.0 / 49.1 / 58.4% |
+| 絶対値 0–99 / 100–299 / 300–599 | 35,711 / 44,895 / 32,518 | 73.1 / 69.0 / 61.1% |
+| 絶対値 600–1199 / 1200–1999 / 2000–3999 | 35,674 / 53,458 / 24,020 | 57.3 / 56.0 / 54.1% |
+| 絶対値 4000–31999 / mate 32000 | 737 / 2,003 | 40.3 / 42.4% |
+| 盤上の玉以外 32–38 / 24–31 / 23 枚以下 | 115,094 / 107,627 / 6,295 | 69.9 / 53.6 / 54.5% |
+| 持駒の合計 0–3 / 4–7 / 8–11 / 12 枚以上 | 58,903 / 76,978 / 66,770 / 26,365 | 77.2 / 60.6 / 53.4 / 51.8% |
+| 勝者手番 / 敗者手番 / draw | 109,897 / 109,702 / 9,417 | 59.9 / 63.5 / 63.7% |
+| 終局まで 64 以上 / 32–63 / 16–31 ply | 100,092 / 63,489 / 32,712 | 70.3 / 59.9 / 53.3% |
+| 終局まで 8–15 / 1–7 / 0 ply | 16,384 / 14,336 / 2,003 | 50.2 / 45.9 / 42.4% |
+
+終盤・大差・終局直前を薄くする偏りがある。盤上 23 枚以下の局面は dropped の 3.27%、kept の 2.43%。勝者手番も少し落ちやすい。全 train は勝ち 4,842,033 / 負け 5,131,072 / draw 309,112 行だった。これは直ちに符号の誤りを意味しない。
+
+次回も層別の保持率を保存する。まず静止行の終盤比率を揃える小さな抽出・重みづけ比較が安い。changed=inherit だけに切り替えると、変わった葉に根の値を載せる問題が残る。変わった行を使うなら葉を再ラベルする比較が必要になる。
+
+### メタデータ、単位、学習 — note
+
+val_shards の修正は両モードで正しい。共有モードは共有 cache の [95,96,97,98,99] を引き継ぐ。holdout は []。8 局の再 assemble で両方を実行した。trainer が参照する同じキーを読み出せた。これは分割を動かすキーではなく、表示と結果保存に使うキーである。
+
+表示 cp から内部 Value へは符号つき ceil(|cp|×0.9)。全 16,694,625 行で保存値と raw 表示の不一致は 0。mate は ±32000。QS 後も mate 行を一律には除かない。train に 61,654 行残る。学習時は既定 ±2000 に clamp する。絶対値 2000 超は 1,036,591 行（10.08%）。単位は学習・書き出しの内部 Value 系で揃っている。
+
+R の目標は sigmoid(eval/600) を 0.7、結果を 0.3 で混ぜ、600×logit で戻し、±2000 に制限する。値と ±1 を直接足してはいない。draw=0 は既知でも混ぜない。cp 分岐は常に win/loss だけを選ぶため、ここでは --wdl-known-only の有無で挙動が変わらない。真の draw を学ばせるなら、欠測とは別のマスクが必要になる。
+
+左右反転は筋だけを反転する。手番と勝者は変わらない。値と勝敗はそのままでよい。compact の標本は両 split とも全列一致。train 全量の今回の SHA も、compact 作成時に保存した復号 SHA と一致した。
+
+## B. 将棋の形
+
+### 手数、先後、序盤 — note
+
+手数は指し終えた ply。平均 126.32、中央値 120。最短 15、25/75% 点は 100/145、90% 点 174、95% 点 198、99% 点 304、最長 320。
+先手勝ち 74,204（49.47%）、後手勝ち 73,040（48.69%）、draw 2,756（1.84%）。引き分けを除いた先手勝率は 50.40%。
+
+保存された終局 mate の長さは中央値 9、90% 点 12、99% 点 16、最大 27 ply。11 ply 以上を読んで終わる局は 38,181（全局の 25.45%）。15 ply 以上は 4,117（2.74%）。「詰みまで」は盤面で詰むまで指す意味ではなく、先読みで詰みが分かった時点で止まる意味である。負の mate 表示には受け側の手数の偶奇も含むので、数字は USI の表示長として集計した。
+
+| 到達 ply | 到達局数 | 異なる局面数 | 最大重複 |
+|---|---:|---:|---:|
+| 16 | 149,999 | 149,985 | 2 |
+| 24 | 149,982 | 149,970 | 2 |
+| 32 | 149,892 | 149,881 | 2 |
+
+局面は盤面・持駒・手番で数えた。手数欄は除く。6–16 ply の合法一様乱数の後も局面の重複は少ない。ただし局面数の多さは、戦型や良い序盤の多さを保証しない。
+
+### 玉の位置 — note、次回も測る
+
+筋・段は通常の 1–9。到達した局を分母にした。「中央 2 筋」は先手 5/6 筋、後手 4/5 筋。「翼＋自陣」はどちらかの端 3 筋かつ自陣 3 段。囲いの代理指標であり、金銀の配置は要求しない。
+居飛車の分類は、自陣側 4 段に未成の自分の飛車がちょうど 1 枚あり、先手 1–3 筋／後手 7–9 筋にいる場合。振り飛車は残る筋。それ以外は不明とした。
+
+| ply | 側 | 到達局数 | 中央 2 筋 | 翼＋自陣 | 居飛車だけで反対翼＋自陣 |
+|---|---|---:|---:|---:|---:|
+''' + '\n'.join(king_rows) + '''
+
+最頻の升は、先手が 30/40/60 ply とも 5 九、後手は 5 一だった。60 ply の段分布は先手 7/8/9 段が 6.3/56.5/36.2%、後手 1/2/3 段が 37.3/55.5/6.3%。筋・段の全度数と升の同時度数は JSON にある。
+先手の 8–9 筋と後手の 1–2 筋は、60 ply でもそれぞれ 4.86% / 4.77%だった。多くは中央か、1 筋だけ寄せた位置にいる。振り飛車分類で飛車と反対の翼＋自陣にいる割合も、60 ply で先手 31.3%、後手 30.7%にとどまる。
+
+floodgate で見た中央寄りの傾向は自己対局にもある。左右反転学習は左右の偏りを減らすが、中央と翼の不足は解消しない。この分布の自分の値と勝敗で学ぶので、傾向を固定する可能性はある。ただし今回だけでは、囲わないことが悪手か、wringing が強めたかは分からない。
+
+安い次回確認は、task142 と新採用 eval を同じ 512 個の乱数序盤で 60 ply まで指す比較。30/40/60 ply の筋・段、居飛車の反対翼率、乱数区間後の玉移動回数を比べる。囲いを指示する変更はせず、同じ条件で分布が動くかを見る。
+
+## 2 回目への提案
+
+1. **must-fix before round 2**: 新しい run 名とデータ・モデルの出力先を使う。t154 の ADOPTED は初期重みと対局の名前に使うだけで、gen/qs の --eval-dir には渡らない。両方の既定値は task142。両コマンドに新採用 eval を明示し、生成・QS・初期重みの SHA を起動前に照合する。既存 TAG と cache/history のままなら再利用で処理を飛ばす。
+2. **should-fix**: 上記の QS 層別集計と、学習行とは別の終局・停止記録を毎回残す。元のパイプラインの結果を変える前に、終盤を増やす小比較を置く。
+3. **note**: 共有 val を継続しつつ、新自己対局の局単位 holdout も診断用に作る。真の draw の扱いは win/loss 混合と分けて検討する。玉の分布を同じ序盤で追う。新しい序盤 seed も使い、前回との局面の重なりを測る。
+
+## 再現と限界
+
+リポジトリ直下で実行する。raw と cache は同時に走らせても 2 プロセス。spot は両方が終わってから実行する。
+
+```bash
+source scripts/env.sh
+export DATA_ROOT
+AUDIT="$DATA_ROOT/work/task156_audit"
+"$VENV_PY" -B experiments/alphazero/t156_selfplay_audit.py raw --out "$AUDIT"
+"$VENV_PY" -B experiments/alphazero/t156_selfplay_audit.py cache --out "$AUDIT"
+# spot の出力先は未作成の directory にする。
+"$VENV_PY" -B experiments/alphazero/t156_spot_checks.py --out "$AUDIT/spot"
+"$VENV_PY" -B experiments/alphazero/t156_write_report.py --audit "$AUDIT"
+```
+
+中間の JSON・標本 ID・PSV・小キャッシュは永続の work/task156_audit/ に保存した。raw 集計は 147 秒、cache は 62 秒。最大 RSS はそれぞれ約 216 MiB / 4,836 MiB。Rust、探索本体、学習本体は変更していないので Cargo 回帰は対象外。検証はデータ全件照合、cshogi 再生、実エンジンと現行 assemble の小実行で行った。
+
+全量 QS の再実行と全 part のハッシュ検証はしていない。層別の標本は局単位であり、各行を独立とした有意差検定はしていない。共有 val の棋譜 ID、node cap の厳密な到達数、玉配置と強さの因果は未確認。数値と条件の正本は [JSON](task156_selfplay_audit.json)。
+'''
+    (args.reports/'task156_selfplay_audit.md').write_text(report)
+    print('wrote task156_selfplay_audit.md and .json')
+
+
+if __name__ == '__main__':
+    main()

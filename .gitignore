@@ -1,0 +1,21 @@
+/target/
+__pycache__/
+*.pyc
+
+# Never commit secrets, data, weights or logs
+.env
+.env.*
+*.pem
+*.key
+*.log
+*.bin
+*.npy
+*.npz
+*.hcpe
+*.ckpt
+*.pt
+*.onnx
+*.7z
+node_modules/
+.venv/
+venv/

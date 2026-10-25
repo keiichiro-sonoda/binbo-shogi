@@ -1,0 +1,499 @@
+{
+  "machines": [
+    {
+      "root": "~/binbo-shogi-data/work/task180_clock/local_prereg_v3",
+      "openings": 1333,
+      "paired_summary": {
+        "cap30": {
+          "pairs": 1333,
+          "opening_clusters": 1331,
+          "default_score": 0.176894223555889,
+          "arm_score": 0.181695423855964,
+          "delta": 0.004801200300075018,
+          "paired_variance": 0.239616570809369,
+          "ci95": [
+            -0.021605401350337585,
+            0.031231231231231227
+          ],
+          "ci97_5_bonferroni_two_arms": [
+            -0.02537537537537538,
+            0.034985313544197864
+          ],
+          "forfeits_default": 38,
+          "forfeits_arm": 31,
+          "wdl_default": {
+            "wins": 225,
+            "draws": 27,
+            "losses": 1081
+          },
+          "wdl_arm": {
+            "wins": 227,
+            "draws": 38,
+            "losses": 1068
+          },
+          "bootstrap_reps": 20000,
+          "bootstrap_seed": 180
+        },
+        "slow70": {
+          "pairs": 1333,
+          "opening_clusters": 1331,
+          "default_score": 0.176894223555889,
+          "arm_score": 0.2088522130532633,
+          "delta": 0.03195798949737434,
+          "paired_variance": 0.28333227451006887,
+          "ci95": [
+            0.0034533886850090898,
+            0.06033011679344008
+          ],
+          "ci97_5_bonferroni_two_arms": [
+            -0.0007496251874062968,
+            0.06482091560123
+          ],
+          "forfeits_default": 38,
+          "forfeits_arm": 34,
+          "wdl_default": {
+            "wins": 225,
+            "draws": 27,
+            "losses": 1081
+          },
+          "wdl_arm": {
+            "wins": 262,
+            "draws": 41,
+            "losses": 1030
+          },
+          "bootstrap_reps": 20000,
+          "bootstrap_seed": 180
+        }
+      },
+      "arms": {
+        "default": {
+          "wdl": {
+            "wins": 225,
+            "draws": 27,
+            "losses": 1081
+          },
+          "time_forfeits": 38,
+          "minimum_remaining_ms": {
+            "n": 1333,
+            "mean": 237.35790397599402,
+            "min": -2086.128,
+            "p25": 119.331,
+            "median": 120.193,
+            "p75": 120.842,
+            "max": 11797.059
+          },
+          "sente_first15_own_moves_ms": {
+            "n": 1333,
+            "mean": 9631.999724681169,
+            "min": 5382.0380000000005,
+            "p25": 8310.542,
+            "median": 9418.801,
+            "p75": 10689.073,
+            "max": 17259.5
+          },
+          "first15_observed_responses": {
+            "n": 1333,
+            "mean": 15.0,
+            "min": 15.0,
+            "p25": 15.0,
+            "median": 15.0,
+            "p75": 15.0,
+            "max": 15.0
+          }
+        },
+        "cap30": {
+          "wdl": {
+            "wins": 227,
+            "draws": 38,
+            "losses": 1068
+          },
+          "time_forfeits": 31,
+          "minimum_remaining_ms": {
+            "n": 1333,
+            "mean": 398.0860592648162,
+            "min": -1403.83,
+            "p25": 119.448,
+            "median": 120.241,
+            "p75": 120.899,
+            "max": 16721.204
+          },
+          "sente_first15_own_moves_ms": {
+            "n": 1333,
+            "mean": 7448.961111027756,
+            "min": 3678.7960000000003,
+            "p25": 6424.46,
+            "median": 7274.027,
+            "p75": 8285.239,
+            "max": 14657.471
+          },
+          "first15_observed_responses": {
+            "n": 1333,
+            "mean": 14.993998499624906,
+            "min": 12.0,
+            "p25": 15.0,
+            "median": 15.0,
+            "p75": 15.0,
+            "max": 15.0
+          }
+        },
+        "slow70": {
+          "wdl": {
+            "wins": 262,
+            "draws": 41,
+            "losses": 1030
+          },
+          "time_forfeits": 34,
+          "minimum_remaining_ms": {
+            "n": 1333,
+            "mean": 550.1285648912228,
+            "min": -3989.349,
+            "p25": 119.591,
+            "median": 120.464,
+            "p75": 121.235,
+            "max": 15528.392
+          },
+          "sente_first15_own_moves_ms": {
+            "n": 1333,
+            "mean": 7606.886702175543,
+            "min": 4101.138,
+            "p25": 6496.704,
+            "median": 7476.57,
+            "p75": 8552.595,
+            "max": 15354.641
+          },
+          "first15_observed_responses": {
+            "n": 1333,
+            "mean": 14.99774943735934,
+            "min": 12.0,
+            "p25": 15.0,
+            "median": 15.0,
+            "p75": 15.0,
+            "max": 15.0
+          }
+        }
+      }
+    },
+    {
+      "root": "~/binbo-shogi-data/work/task180_clock/xeon_prereg_v3",
+      "openings": 2667,
+      "paired_summary": {
+        "cap30": {
+          "pairs": 2667,
+          "opening_clusters": 2663,
+          "default_score": 0.1351331083614548,
+          "arm_score": 0.16145481814773155,
+          "delta": 0.026321709786276716,
+          "paired_variance": 0.2295694733582158,
+          "ci95": [
+            0.00855534709193246,
+            0.04451972493482986
+          ],
+          "ci97_5_bonferroni_two_arms": [
+            0.005778611632270168,
+            0.04700166357395843
+          ],
+          "forfeits_default": 1,
+          "forfeits_arm": 0,
+          "wdl_default": {
+            "wins": 342,
+            "draws": 46,
+            "losses": 2279
+          },
+          "wdl_arm": {
+            "wins": 413,
+            "draws": 44,
+            "losses": 2210
+          },
+          "bootstrap_reps": 20000,
+          "bootstrap_seed": 180
+        },
+        "slow70": {
+          "pairs": 2667,
+          "opening_clusters": 2663,
+          "default_score": 0.1351331083614548,
+          "arm_score": 0.17337832770903636,
+          "delta": 0.03824521934758155,
+          "paired_variance": 0.23142497660410602,
+          "ci95": [
+            0.01949756280464942,
+            0.05663919276676632
+          ],
+          "ci97_5_bonferroni_two_arms": [
+            0.01686656671664168,
+            0.05918979744936235
+          ],
+          "forfeits_default": 1,
+          "forfeits_arm": 0,
+          "wdl_default": {
+            "wins": 342,
+            "draws": 46,
+            "losses": 2279
+          },
+          "wdl_arm": {
+            "wins": 436,
+            "draws": 66,
+            "losses": 2165
+          },
+          "bootstrap_reps": 20000,
+          "bootstrap_seed": 180
+        }
+      },
+      "arms": {
+        "default": {
+          "wdl": {
+            "wins": 342,
+            "draws": 46,
+            "losses": 2279
+          },
+          "time_forfeits": 1,
+          "minimum_remaining_ms": {
+            "n": 2667,
+            "mean": 205.16910986126732,
+            "min": -0.124,
+            "p25": 115.398,
+            "median": 116.473,
+            "p75": 117.44149999999999,
+            "max": 15501.356
+          },
+          "sente_first15_own_moves_ms": {
+            "n": 2667,
+            "mean": 10580.98308361455,
+            "min": 5467.817,
+            "p25": 9329.662,
+            "median": 10430.979,
+            "p75": 11720.831,
+            "max": 18824.288
+          },
+          "first15_observed_responses": {
+            "n": 2667,
+            "mean": 14.999625046869141,
+            "min": 14.0,
+            "p25": 15.0,
+            "median": 15.0,
+            "p75": 15.0,
+            "max": 15.0
+          }
+        },
+        "cap30": {
+          "wdl": {
+            "wins": 413,
+            "draws": 44,
+            "losses": 2210
+          },
+          "time_forfeits": 0,
+          "minimum_remaining_ms": {
+            "n": 2667,
+            "mean": 229.02936520434946,
+            "min": 38.072,
+            "p25": 115.408,
+            "median": 116.549,
+            "p75": 117.56899999999999,
+            "max": 13671.594
+          },
+          "sente_first15_own_moves_ms": {
+            "n": 2667,
+            "mean": 8282.272799775028,
+            "min": 4624.306,
+            "p25": 7274.714,
+            "median": 8130.352,
+            "p75": 9146.894,
+            "max": 14990.634
+          },
+          "first15_observed_responses": {
+            "n": 2667,
+            "mean": 15.0,
+            "min": 15.0,
+            "p25": 15.0,
+            "median": 15.0,
+            "p75": 15.0,
+            "max": 15.0
+          }
+        },
+        "slow70": {
+          "wdl": {
+            "wins": 436,
+            "draws": 66,
+            "losses": 2165
+          },
+          "time_forfeits": 0,
+          "minimum_remaining_ms": {
+            "n": 2667,
+            "mean": 352.07599550056244,
+            "min": 7.943,
+            "p25": 115.571,
+            "median": 116.694,
+            "p75": 117.789,
+            "max": 15063.985
+          },
+          "sente_first15_own_moves_ms": {
+            "n": 2667,
+            "mean": 8507.691189351332,
+            "min": 4732.1939999999995,
+            "p25": 7348.347,
+            "median": 8353.7,
+            "p75": 9539.325499999999,
+            "max": 15956.615
+          },
+          "first15_observed_responses": {
+            "n": 2667,
+            "mean": 14.999250093738283,
+            "min": 13.0,
+            "p25": 15.0,
+            "median": 15.0,
+            "p75": 15.0,
+            "max": 15.0
+          }
+        }
+      }
+    }
+  ],
+  "pooled": {
+    "openings": 4000,
+    "comparisons": {
+      "cap30": {
+        "pairs": 4000,
+        "delta": 0.019149999999999997,
+        "ci95": [
+          0.004153994424731739,
+          0.03404171998524088
+        ],
+        "ci97_5_bonferroni_two_arms": [
+          0.0020948011798261694,
+          0.03632681824287366
+        ],
+        "pass": true
+      },
+      "slow70": {
+        "pairs": 4000,
+        "delta": 0.03615,
+        "ci95": [
+          0.020755269693432096,
+          0.0517489847725518
+        ],
+        "ci97_5_bonferroni_two_arms": [
+          0.018381553960679066,
+          0.053847533340341765
+        ],
+        "pass": true
+      }
+    },
+    "arms": {
+      "default": {
+        "wdl": {
+          "wins": 567,
+          "draws": 73,
+          "losses": 3360
+        },
+        "time_forfeits": 39,
+        "minimum_remaining_ms": {
+          "n": 4000,
+          "mean": 215.89602549999998,
+          "min": -2086.128,
+          "p25": 115.87075,
+          "median": 117.2285,
+          "p75": 119.58500000000001,
+          "max": 15501.356
+        },
+        "sente_first15_own_moves_ms": {
+          "n": 4000,
+          "mean": 10264.734379250001,
+          "min": 5382.0380000000005,
+          "p25": 8926.22075,
+          "median": 10130.809000000001,
+          "p75": 11453.20425,
+          "max": 18824.288
+        },
+        "first15_observed_responses": {
+          "n": 4000,
+          "mean": 14.99975,
+          "min": 14.0,
+          "p25": 15.0,
+          "median": 15.0,
+          "p75": 15.0,
+          "max": 15.0
+        }
+      },
+      "cap30": {
+        "wdl": {
+          "wins": 640,
+          "draws": 82,
+          "losses": 3278
+        },
+        "time_forfeits": 31,
+        "minimum_remaining_ms": {
+          "n": 4000,
+          "mean": 285.3675085,
+          "min": -1403.83,
+          "p25": 115.8855,
+          "median": 117.4025,
+          "p75": 119.66900000000001,
+          "max": 16721.204
+        },
+        "sente_first15_own_moves_ms": {
+          "n": 4000,
+          "mean": 8004.5716795,
+          "min": 3678.7960000000003,
+          "p25": 6924.726,
+          "median": 7874.512,
+          "p75": 8919.8985,
+          "max": 14990.634
+        },
+        "first15_observed_responses": {
+          "n": 4000,
+          "mean": 14.998,
+          "min": 12.0,
+          "p25": 15.0,
+          "median": 15.0,
+          "p75": 15.0,
+          "max": 15.0
+        }
+      },
+      "slow70": {
+        "wdl": {
+          "wins": 698,
+          "draws": 107,
+          "losses": 3195
+        },
+        "time_forfeits": 34,
+        "minimum_remaining_ms": {
+          "n": 4000,
+          "mean": 418.07701425,
+          "min": -3989.349,
+          "p25": 116.0675,
+          "median": 117.594,
+          "p75": 120.08824999999999,
+          "max": 15528.392
+        },
+        "sente_first15_own_moves_ms": {
+          "n": 4000,
+          "mean": 8207.498094,
+          "min": 4101.138,
+          "p25": 7016.1714999999995,
+          "median": 8033.603499999999,
+          "p75": 9238.27,
+          "max": 15956.615
+        },
+        "first15_observed_responses": {
+          "n": 4000,
+          "mean": 14.99875,
+          "min": 12.0,
+          "p25": 15.0,
+          "median": 15.0,
+          "p75": 15.0,
+          "max": 15.0
+        }
+      }
+    }
+  },
+  "method": {
+    "bootstrap_reps": 20000,
+    "bootstrap_seed": 180,
+    "sampling": "opening_id clusters within machine; ratio means weighted by fixed registered seeded-opening counts per machine",
+    "score": {
+      "win": 1,
+      "draw": 0.4,
+      "loss": 0
+    },
+    "timing": "sente only; ms; post-response remaining; first 15 searched responses after the opening, including terminal responses; short games use all"
+  }
+}

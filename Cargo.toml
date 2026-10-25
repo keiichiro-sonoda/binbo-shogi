@@ -1,0 +1,14 @@
+[package]
+name = "binbo-shogi"
+version = "0.1.0"
+edition = "2021"
+license = "GPL-3.0-or-later"
+
+[dependencies]
+shogi_core = "=0.1.5"
+shogi_usi_parser = "=0.1.0"
+yasai = { git = "https://github.com/sugyan/yasai.git", rev = "51c23780109a4ac7258c27d8965640d4f8b78e9e", features = ["simd"] }
+
+[profile.release]
+lto = true
+codegen-units = 1

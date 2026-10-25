@@ -1,0 +1,94 @@
+{
+  "date": "2026-10-24",
+  "status": "NOT_RUN",
+  "eval": "task154_R_result30",
+  "seed": 2026180000,
+  "pairs_per_arm": 10000,
+  "games_total": 30000,
+  "arms": {
+    "default": {},
+    "cap30": {
+      "rule": "cap",
+      "cap_ms": 3000,
+      "k": 17
+    },
+    "slow70": {
+      "a_option": [
+        "SlowMover=70"
+      ]
+    }
+  },
+  "control_ms": {
+    "black_base": 18000,
+    "white_base": 60000,
+    "black_inc": 200,
+    "white_inc": 200
+  },
+  "threads": 1,
+  "hash_mb": 256,
+  "ponder": false,
+  "opening_plies": 4,
+  "max_plies": 512,
+  "network_margin_ms": 0,
+  "charge_quantum_ms": 0,
+  "opening_source": "seeded uniform legal moves after buoy",
+  "primary_metric": "mean(sente_score_arm - sente_score_default); W=1 D=.4 L=0",
+  "inference": "opening-cluster paired percentile bootstrap; 20000 reps; seed 180; two arms Bonferroni 97.5% CIs",
+  "stopping": "fixed 10000 pairs; no significance peeking; missing/INVALID invalidates analysis",
+  "followup": "fresh openings, event clock and options including ponder; separate authorization/run",
+  "amendment_2026-10-24T02:35": {
+    "by": "Claude (coordinator), before any experiment game was played",
+    "pairs_per_arm": 4000,
+    "games_total": 12000,
+    "reason": "fit the Xeon time budget of the night (judging occupies it until ~03:40); arms, seed, controls, metric, inference unchanged",
+    "stopping": "fixed 4000 openings x 3 arms; no peeking; analysed once when all 12000 games are done",
+    "machine": "Xeon, --parallel 40, --threads 1, --hash-mb 256 (judging is not run there at the same time)"
+  },
+  "amendment2_2026-10-24T03:00": {
+    "by": "Claude, before any experiment game was played",
+    "split": {
+      "14700KF": {
+        "seed": 2026180000,
+        "games": 2000,
+        "parallel": 20
+      },
+      "Xeon": {
+        "seed": 2026182000,
+        "games": 2000,
+        "parallel": 40
+      }
+    },
+    "note": "game i uses opening seed+i, so the two halves are exactly the registered 4000 openings 2026180000..2026183999; every opening plays all 3 arms on the same machine",
+    "analysis": "paired_summary.py per machine (descriptive) + pooled: per-opening paired differences of both machines, opening-cluster bootstrap 20000 reps stratified by machine, seed 180, Bonferroni 97.5% CI lower bound > 0 = pass; once, after both halves finish"
+  },
+  "amendment3_2026-10-24T03:15": {
+    "by": "Claude; only game COUNTS of the first local attempt were seen (67 games), never an outcome",
+    "why": "time-control games take the same wall time on any CPU (~32 games/h per parallel slot), so the 2000/2000 split would end the 14700KF half at ~12:30; rebalance by slots",
+    "split": {
+      "14700KF": {
+        "seed": 2026180000,
+        "games": 1333,
+        "parallel": 24,
+        "out": "local_prereg_v2"
+      },
+      "Xeon": {
+        "seed": 2026181333,
+        "games": 2667,
+        "parallel": 48,
+        "out": "xeon_prereg_v2"
+      }
+    },
+    "discarded": "local_prereg_v1 (67 games of a stopped first attempt; never summarised)",
+    "unchanged": "the 4000 openings 2026180000..2026183999, arms, controls, metric, pooled_summary.py analysis (stratified by machine)"
+  },
+  "amendment4_2026-10-24T03:23": {
+    "by": "Claude, after an independent review of the harness; no outcome of any attempt was ever summarised or read",
+    "harness_fix": "clock_match.py: an engine that dies between moves gave BrokenPipeError in close() and aborted the whole run; now one INVALID row (test_idle_engine_death_is_one_invalid_game reproduces the abort without the fix)",
+    "cap30_k": "17 instead of 15: the 4 random opening plies include 2 sente moves, so own moves 3..17 = the first 15 SEARCHED sente moves, as the event proxy (buoy only, k 15) would cap; checked with rewrite()",
+    "outputs": {
+      "14700KF": "local_prereg_v3 (seed 2026180000, 1333, parallel 24)",
+      "Xeon": "xeon_prereg_v3 (seed 2026181333, 2667, parallel 48)"
+    },
+    "discarded": "local_prereg_v2 (140 games), never summarised"
+  }
+}

@@ -1,0 +1,14 @@
+# Only source (*.py *.sh *.md) is tracked here. Everything below is large/binary and
+# lives non-committed in ~/task074_frameworks/... and ~/binbo-shogi-data/... — never commit.
+*_ckpt/
+*_data/
+*_logs/
+checkpoints/
+logs/
+__pycache__/
+*.pyc
+*.ckpt
+*.npy
+*.tsv
+*.log
+*.json
